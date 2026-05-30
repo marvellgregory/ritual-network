@@ -9,349 +9,299 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{
-  --bg:#020b14;
-  --bg2:#041220;
-  --bg3:#071a2e;
-  --card:#08192a;
-  --card2:#0c2236;
-  --border:#0e3050;
-  --border2:#164068;
-  --text:#d4eaf7;
-  --text2:#6fa3c4;
-  --text3:#2d6080;
-  --accent:#00c6ff;
-  --accent2:#0099cc;
-  --teal:#00e5c8;
-  --teal2:#00b09e;
-  --gold:#e8c96a;
-  --gold2:#c9a84c;
-  --green:#00e676;
-  --rose:#ff6b9d;
+  --bg:#020b14;--bg2:#041220;--bg3:#071a2e;
+  --card:#08192a;--card2:#0c2236;
+  --border:#0e3050;--border2:#164068;
+  --text:#d4eaf7;--text2:#6fa3c4;--text3:#2d5f7a;
+  --accent:#00c6ff;--accent2:#0099cc;
+  --teal:#00e5c8;--teal2:#00b09e;
+  --gold:#e8c96a;--gold2:#c9a84c;
+  --green:#00e676;--rose:#ff6b9d;
   --r:14px;--r2:22px;
 }
 html{scroll-behavior:smooth}
 body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
-
-/* CANVAS BG */
-#bgCanvas{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:0.4}
+#bgCanvas{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:0.35}
 
 /* NAV */
-nav{
-  position:fixed;top:0;left:0;right:0;z-index:200;
-  height:66px;
-  background:rgba(2,11,20,0.85);backdrop-filter:blur(24px);
-  border-bottom:1px solid rgba(0,198,255,0.1);
-  display:flex;align-items:center;justify-content:space-between;
-  padding:0 2.5rem;
-}
-.logo{
-  font-family:'Syne',sans-serif;font-weight:800;font-size:1.15rem;
-  color:var(--text);display:flex;align-items:center;gap:10px;cursor:pointer;letter-spacing:-0.02em;
-}
-.logo-ring{
-  width:28px;height:28px;border-radius:50%;
-  border:2px solid var(--accent);
-  display:flex;align-items:center;justify-content:center;
-  position:relative;
-}
-.logo-ring::after{
-  content:'';width:8px;height:8px;border-radius:50%;
-  background:var(--accent);
-  animation:logoPulse 2.5s ease-in-out infinite;
-}
-@keyframes logoPulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.4);opacity:0.5}}
+nav{position:fixed;top:0;left:0;right:0;z-index:200;height:64px;background:rgba(2,11,20,0.92);backdrop-filter:blur(24px);border-bottom:1px solid rgba(0,198,255,0.1);display:flex;align-items:center;justify-content:space-between;padding:0 2rem}
+.logo{font-family:'Syne',sans-serif;font-weight:800;font-size:1.1rem;color:var(--text);display:flex;align-items:center;gap:9px;cursor:pointer;letter-spacing:-0.02em}
+.logo-ring{width:26px;height:26px;border-radius:50%;border:2px solid var(--accent);display:flex;align-items:center;justify-content:center;position:relative}
+.logo-ring::after{content:'';width:7px;height:7px;border-radius:50%;background:var(--accent);animation:lp 2.5s ease-in-out infinite}
+@keyframes lp{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.5);opacity:0.4}}
 .nav-links{display:flex;gap:2px}
-.nav-link{
-  padding:7px 15px;border-radius:8px;font-size:0.83rem;font-weight:500;
-  color:var(--text2);cursor:pointer;transition:all 0.2s;border:none;background:none;
-  font-family:'DM Sans',sans-serif;
-}
+.nav-link{padding:6px 13px;border-radius:8px;font-size:0.82rem;font-weight:500;color:var(--text2);cursor:pointer;transition:all 0.2s;border:none;background:none;font-family:'DM Sans',sans-serif}
 .nav-link:hover{color:var(--text);background:rgba(0,198,255,0.06)}
 .nav-link.active{color:var(--accent);background:rgba(0,198,255,0.08)}
-.wallet-status{
-  display:flex;align-items:center;gap:10px;
-}
-.wallet-btn{
-  padding:8px 20px;border-radius:10px;font-size:0.82rem;font-weight:600;
-  background:linear-gradient(135deg,rgba(0,198,255,0.15),rgba(0,229,200,0.1));
-  color:var(--accent);border:1px solid rgba(0,198,255,0.3);
-  cursor:pointer;transition:all 0.25s;font-family:'DM Sans',sans-serif;
-}
-.wallet-btn:hover{background:rgba(0,198,255,0.2);border-color:var(--accent);transform:translateY(-1px)}
-.wallet-btn.connected{
-  color:var(--teal);border-color:rgba(0,229,200,0.4);
-  background:rgba(0,229,200,0.08);font-size:0.75rem;
-}
-.net-badge{
-  padding:4px 10px;border-radius:6px;font-size:0.7rem;font-weight:600;
-  background:rgba(0,229,200,0.08);border:1px solid rgba(0,229,200,0.2);
-  color:var(--teal);display:none;align-items:center;gap:5px;letter-spacing:0.04em;
-}
+.nav-r{display:flex;align-items:center;gap:8px}
+.net-badge{padding:4px 10px;border-radius:6px;font-size:0.68rem;font-weight:600;background:rgba(0,229,200,0.08);border:1px solid rgba(0,229,200,0.2);color:var(--teal);display:none;align-items:center;gap:5px;letter-spacing:0.04em}
 .net-badge.show{display:flex}
-.net-dot{width:6px;height:6px;border-radius:50%;background:var(--teal);animation:pulse2 2s infinite}
-@keyframes pulse2{0%,100%{opacity:1}50%{opacity:0.3}}
+.nd{width:6px;height:6px;border-radius:50%;background:var(--teal);animation:nd 2s infinite}
+@keyframes nd{0%,100%{opacity:1}50%{opacity:0.3}}
+.wbtn{padding:8px 18px;border-radius:10px;font-size:0.8rem;font-weight:600;background:linear-gradient(135deg,rgba(0,198,255,0.15),rgba(0,229,200,0.1));color:var(--accent);border:1px solid rgba(0,198,255,0.3);cursor:pointer;transition:all 0.22s;font-family:'DM Sans',sans-serif}
+.wbtn:hover{background:rgba(0,198,255,0.2);border-color:var(--accent)}
+.wbtn.connected{color:var(--teal);border-color:rgba(0,229,200,0.4);background:rgba(0,229,200,0.08);font-size:0.73rem}
+
+/* TICKER */
+.ticker{background:var(--card2);border-bottom:1px solid var(--border);padding:7px 0;overflow:hidden;white-space:nowrap;position:fixed;top:64px;left:0;right:0;z-index:199}
+.ti{display:inline-flex;gap:48px;animation:tick 35s linear infinite}
+@keyframes tick{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.ti span{font-size:0.73rem;color:var(--text3);display:inline-flex;align-items:center;gap:5px}
+.ti span em{color:var(--accent);font-style:normal}
 
 /* PAGES */
-.page{display:none;padding-top:66px;position:relative;z-index:1}
+.page{display:none;padding-top:calc(64px + 31px);position:relative;z-index:1}
 .page.active{display:block}
 
 /* HERO */
-.hero{
-  min-height:100vh;display:flex;flex-direction:column;
-  align-items:center;justify-content:center;
-  text-align:center;padding:2rem 2rem 6rem;
-  position:relative;overflow:hidden;
-}
-.hero-nodes{position:absolute;inset:0;pointer-events:none;overflow:hidden}
-.node{
-  position:absolute;width:6px;height:6px;border-radius:50%;background:var(--accent);
-  animation:nodeFloat 6s ease-in-out infinite;
-}
-.node::after{content:'';position:absolute;inset:-4px;border-radius:50%;border:1px solid rgba(0,198,255,0.3);animation:nodeRing 6s ease-in-out infinite}
-@keyframes nodeFloat{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-12px) scale(1.2)}}
-@keyframes nodeRing{0%,100%{transform:scale(1);opacity:0.5}50%{transform:scale(1.8);opacity:0}}
-.node-line{position:absolute;background:linear-gradient(90deg,transparent,rgba(0,198,255,0.15),transparent);height:1px;transform-origin:left center}
-.hero-eyebrow{
-  display:inline-flex;align-items:center;gap:8px;
-  background:rgba(0,198,255,0.06);border:1px solid rgba(0,198,255,0.2);
-  color:var(--accent);padding:7px 18px;border-radius:100px;
-  font-size:0.78rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;
-  margin-bottom:2.2rem;animation:fadeUp 0.8s ease both;
-}
-.hero h1{
-  font-family:'Syne',sans-serif;font-weight:800;
-  font-size:clamp(3rem,7vw,5.5rem);line-height:1.05;
-  letter-spacing:-0.04em;margin-bottom:1.4rem;
-  animation:fadeUp 0.8s 0.1s ease both;
-}
-.hero h1 .line2{
-  display:block;
-  background:linear-gradient(135deg,var(--accent),var(--teal));
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-}
-.hero-sub{
-  font-size:1.05rem;color:var(--text2);max-width:500px;line-height:1.75;
-  margin-bottom:3rem;animation:fadeUp 0.8s 0.2s ease both;
-}
-@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-.hero-actions{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;animation:fadeUp 0.8s 0.3s ease both}
-.btn-glow{
-  padding:14px 30px;border-radius:12px;font-size:0.92rem;font-weight:600;
-  background:linear-gradient(135deg,var(--accent),var(--teal));
-  color:#020b14;border:none;cursor:pointer;transition:all 0.25s;
-  font-family:'DM Sans',sans-serif;letter-spacing:0.02em;
-}
-.btn-glow:hover{transform:translateY(-3px);box-shadow:0 12px 40px rgba(0,198,255,0.35)}
-.btn-outline{
-  padding:14px 30px;border-radius:12px;font-size:0.92rem;font-weight:600;
-  background:transparent;color:var(--text);border:1px solid var(--border2);
-  cursor:pointer;transition:all 0.25s;font-family:'DM Sans',sans-serif;
-}
-.btn-outline:hover{border-color:var(--accent);color:var(--accent);background:rgba(0,198,255,0.04)}
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:2rem 2rem 5rem;position:relative;overflow:hidden}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:8px;background:rgba(0,198,255,0.06);border:1px solid rgba(0,198,255,0.2);color:var(--accent);padding:7px 18px;border-radius:100px;font-size:0.76rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:2rem;animation:fu 0.8s ease both}
+.hero h1{font-family:'Syne',sans-serif;font-weight:800;font-size:clamp(2.8rem,6.5vw,5rem);line-height:1.06;letter-spacing:-0.04em;margin-bottom:1.3rem;animation:fu 0.8s 0.1s ease both}
+.hero h1 .hl{display:block;background:linear-gradient(135deg,var(--accent),var(--teal));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-sub{font-size:1rem;color:var(--text2);max-width:480px;line-height:1.75;margin-bottom:2.8rem;animation:fu 0.8s 0.2s ease both}
+@keyframes fu{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+.hero-btns{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;animation:fu 0.8s 0.3s ease both}
+.btn-glow{padding:13px 28px;border-radius:12px;font-size:0.9rem;font-weight:600;background:linear-gradient(135deg,var(--accent),var(--teal));color:#020b14;border:none;cursor:pointer;transition:all 0.22s;font-family:'DM Sans',sans-serif}
+.btn-glow:hover{transform:translateY(-2px);box-shadow:0 10px 36px rgba(0,198,255,0.32)}
+.btn-outline{padding:13px 28px;border-radius:12px;font-size:0.9rem;font-weight:600;background:transparent;color:var(--text);border:1px solid var(--border2);cursor:pointer;transition:all 0.22s;font-family:'DM Sans',sans-serif}
+.btn-outline:hover{border-color:var(--accent);color:var(--accent)}
 
-/* STATS STRIP */
-.stats-strip{
-  display:grid;grid-template-columns:repeat(4,1fr);
-  background:rgba(8,25,42,0.9);border:1px solid var(--border);
-  border-radius:var(--r2);overflow:hidden;margin:0 2rem;
-  backdrop-filter:blur(10px);
-}
-.stat-cell{
-  padding:1.6rem 1rem;text-align:center;
-  border-right:1px solid var(--border);transition:background 0.2s;
-}
-.stat-cell:last-child{border-right:none}
-.stat-cell:hover{background:rgba(0,198,255,0.04)}
-.stat-n{font-family:'Syne',sans-serif;font-size:2rem;font-weight:800;color:var(--text);margin-bottom:5px}
-.stat-l{font-size:0.72rem;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;font-weight:500}
+/* STATS */
+.stats-strip{display:grid;grid-template-columns:repeat(4,1fr);background:rgba(8,25,42,0.9);border:1px solid var(--border);border-radius:var(--r2);overflow:hidden;margin:0 2rem;backdrop-filter:blur(10px)}
+.sc{padding:1.5rem 1rem;text-align:center;border-right:1px solid var(--border);transition:background 0.2s}
+.sc:last-child{border-right:none}
+.sc:hover{background:rgba(0,198,255,0.04)}
+.sn{font-family:'Syne',sans-serif;font-size:1.8rem;font-weight:800;color:var(--text);margin-bottom:4px}
+.sl{font-size:0.7rem;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;font-weight:500}
 
 /* SECTION */
-.section{padding:3.5rem 2.5rem;max-width:1140px;margin:0 auto}
-.sec-hd{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:1.8rem}
-.sec-title{font-family:'Syne',sans-serif;font-weight:700;font-size:1.4rem;letter-spacing:-0.02em}
-.sec-sub{font-size:0.82rem;color:var(--text3);margin-top:3px}
-.sec-link{font-size:0.82rem;color:var(--accent);cursor:pointer;font-weight:500}
-.sec-link:hover{color:var(--teal)}
+.sec{padding:3rem 2.5rem;max-width:1120px;margin:0 auto}
+.sec-hd{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:1.6rem}
+.sec-title{font-family:'Syne',sans-serif;font-weight:700;font-size:1.35rem;letter-spacing:-0.02em}
+.sec-sub{font-size:0.8rem;color:var(--text3);margin-top:3px}
+.sec-lnk{font-size:0.8rem;color:var(--accent);cursor:pointer;font-weight:500}
 
 /* FEED */
-.feed{display:flex;flex-direction:column;gap:14px}
-.feed-card{
-  background:var(--card);border:1px solid var(--border);border-radius:var(--r2);
-  padding:1.2rem 1.4rem;transition:all 0.2s;
-}
-.feed-card:hover{border-color:var(--border2);background:var(--card2)}
-.feed-top{display:flex;align-items:center;gap:11px;margin-bottom:11px}
-.ava{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.8rem;flex-shrink:0}
-.feed-who{flex:1}
-.feed-name{font-weight:600;font-size:0.87rem;margin-bottom:1px}
-.feed-when{font-size:0.75rem;color:var(--text3)}
-.badge{padding:3px 9px;border-radius:100px;font-size:0.68rem;font-weight:600;letter-spacing:0.04em;text-transform:uppercase}
-.b-drop{background:rgba(232,201,106,0.12);color:var(--gold);border:1px solid rgba(232,201,106,0.25)}
-.b-vouch{background:rgba(0,198,255,0.1);color:var(--accent);border:1px solid rgba(0,198,255,0.25)}
-.b-join{background:rgba(0,229,200,0.08);color:var(--teal);border:1px solid rgba(0,229,200,0.2)}
-.feed-body{font-size:0.87rem;color:var(--text2);line-height:1.6;margin-bottom:12px}
-.feed-body strong{color:var(--text)}
-.sealed-row{
-  background:linear-gradient(135deg,rgba(232,201,106,0.07),rgba(232,201,106,0.02));
-  border:1px solid rgba(232,201,106,0.18);border-radius:12px;
-  padding:12px 14px;margin-bottom:12px;display:flex;align-items:center;gap:10px;
-}
-.seal-txt{flex:1}
-.seal-title{font-size:0.83rem;font-weight:600;color:var(--gold);margin-bottom:2px}
-.seal-sub{font-size:0.75rem;color:var(--text3)}
-.seal-chip{background:var(--card2);border:1px solid var(--border2);border-radius:7px;padding:3px 9px;font-size:0.7rem;font-weight:600;color:var(--gold2);font-family:'Syne',sans-serif}
-.feed-acts{display:flex;gap:14px}
-.feed-act{display:flex;align-items:center;gap:4px;font-size:0.77rem;color:var(--text3);cursor:pointer;transition:color 0.2s;background:none;border:none;font-family:'DM Sans',sans-serif;padding:0}
-.feed-act:hover{color:var(--accent)}
+.feed{display:flex;flex-direction:column;gap:13px}
+.fc{background:var(--card);border:1px solid var(--border);border-radius:var(--r2);padding:1.15rem 1.35rem;transition:all 0.2s}
+.fc:hover{border-color:var(--border2)}
+.ft{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.ava{width:37px;height:37px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.78rem;flex-shrink:0}
+.fw{flex:1}
+.fn{font-weight:600;font-size:0.85rem;margin-bottom:1px}
+.fwhen{font-size:0.73rem;color:var(--text3)}
+.badge{padding:3px 9px;border-radius:100px;font-size:0.66rem;font-weight:600;letter-spacing:0.04em;text-transform:uppercase}
+.bd{background:rgba(232,201,106,0.12);color:var(--gold);border:1px solid rgba(232,201,106,0.25)}
+.bv{background:rgba(0,198,255,0.1);color:var(--accent);border:1px solid rgba(0,198,255,0.25)}
+.bj{background:rgba(0,229,200,0.08);color:var(--teal);border:1px solid rgba(0,229,200,0.2)}
+.fb{font-size:0.85rem;color:var(--text2);line-height:1.6;margin-bottom:11px}
+.fb strong{color:var(--text)}
+.sealed-row{background:linear-gradient(135deg,rgba(232,201,106,0.07),rgba(232,201,106,0.02));border:1px solid rgba(232,201,106,0.18);border-radius:12px;padding:11px 13px;margin-bottom:11px;display:flex;align-items:center;gap:9px}
+.st{flex:1}
+.stitle{font-size:0.81rem;font-weight:600;color:var(--gold);margin-bottom:2px}
+.ssub{font-size:0.73rem;color:var(--text3)}
+.schip{background:var(--card2);border:1px solid var(--border2);border-radius:7px;padding:3px 9px;font-size:0.68rem;font-weight:600;color:var(--gold2);font-family:'Syne',sans-serif}
+.fact{display:flex;gap:13px}
+.fa{display:flex;align-items:center;gap:4px;font-size:0.75rem;color:var(--text3);cursor:pointer;transition:color 0.2s;background:none;border:none;font-family:'DM Sans',sans-serif;padding:0}
+.fa:hover{color:var(--accent)}
 
-/* BUILDERS GRID */
-.bld-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:14px}
-.bld-card{
-  background:var(--card);border:1px solid var(--border);border-radius:var(--r2);
-  padding:1.4rem;transition:all 0.22s;cursor:pointer;
-}
-.bld-card:hover{border-color:rgba(0,198,255,0.3);transform:translateY(-3px);box-shadow:0 12px 40px rgba(0,0,0,0.3)}
-.bld-top{display:flex;align-items:center;gap:12px;margin-bottom:12px}
-.bld-ava{width:50px;height:50px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.95rem;position:relative;flex-shrink:0}
-.bld-ava .dot{position:absolute;bottom:1px;right:1px;width:10px;height:10px;background:var(--green);border-radius:50%;border:2px solid var(--card)}
-.bld-nm{font-family:'Syne',sans-serif;font-weight:700;font-size:0.92rem;margin-bottom:3px}
-.bld-hd{font-size:0.77rem;color:var(--text3)}
-.bld-bio{font-size:0.8rem;color:var(--text2);line-height:1.5;margin-bottom:12px}
-.tags{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:12px}
-.tag{padding:3px 10px;border-radius:100px;font-size:0.7rem;font-weight:500;background:var(--card2);border:1px solid var(--border2);color:var(--text2)}
-.bld-stats{display:flex;gap:0;border-top:1px solid var(--border);padding-top:12px}
+/* BUILDERS */
+.bg{display:grid;grid-template-columns:repeat(auto-fill,minmax(265px,1fr));gap:13px}
+.bc{background:var(--card);border:1px solid var(--border);border-radius:var(--r2);padding:1.3rem;transition:all 0.22s;cursor:pointer}
+.bc:hover{border-color:rgba(0,198,255,0.3);transform:translateY(-3px);box-shadow:0 10px 36px rgba(0,0,0,0.3)}
+.bt{display:flex;align-items:center;gap:11px;margin-bottom:11px}
+.ba{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.9rem;position:relative;flex-shrink:0}
+.ba .dot{position:absolute;bottom:1px;right:1px;width:9px;height:9px;background:var(--green);border-radius:50%;border:2px solid var(--card)}
+.bnm{font-family:'Syne',sans-serif;font-weight:700;font-size:0.9rem;margin-bottom:3px}
+.bhd{font-size:0.75rem;color:var(--text3)}
+.bbio{font-size:0.79rem;color:var(--text2);line-height:1.5;margin-bottom:11px}
+.tags{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:11px}
+.tag{padding:3px 9px;border-radius:100px;font-size:0.68rem;font-weight:500;background:var(--card2);border:1px solid var(--border2);color:var(--text2)}
+.bstats{display:flex;border-top:1px solid var(--border);padding-top:11px}
 .bs{flex:1;text-align:center}
-.bs-n{font-family:'Syne',sans-serif;font-weight:700;font-size:0.95rem;color:var(--text)}
-.bs-l{font-size:0.67rem;color:var(--text3);text-transform:uppercase;letter-spacing:0.05em;margin-top:1px}
-.vouch-b{
-  margin-top:11px;width:100%;padding:8px;border-radius:9px;
-  background:transparent;border:1px solid var(--border2);
-  color:var(--accent);font-size:0.8rem;font-weight:600;cursor:pointer;transition:all 0.2s;
-  font-family:'DM Sans',sans-serif;
-}
-.vouch-b:hover{background:rgba(0,198,255,0.08);border-color:rgba(0,198,255,0.4)}
+.bsn{font-family:'Syne',sans-serif;font-weight:700;font-size:0.9rem;color:var(--text)}
+.bsl{font-size:0.65rem;color:var(--text3);text-transform:uppercase;letter-spacing:0.05em;margin-top:1px}
+.vb{margin-top:10px;width:100%;padding:8px;border-radius:9px;background:transparent;border:1px solid var(--border2);color:var(--accent);font-size:0.78rem;font-weight:600;cursor:pointer;transition:all 0.2s;font-family:'DM Sans',sans-serif}
+.vb:hover{background:rgba(0,198,255,0.08);border-color:rgba(0,198,255,0.4)}
 
 /* DROPS */
-.drops-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:14px}
-.drop-card{
-  background:var(--card);border:1px solid var(--border);border-radius:var(--r2);
-  padding:1.3rem;position:relative;overflow:hidden;transition:all 0.2s;
-}
-.drop-card:hover{border-color:var(--border2)}
-.drop-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--gold2),var(--gold),transparent)}
-.drop-card.opened::before{background:linear-gradient(90deg,var(--teal2),var(--teal),transparent)}
-.drop-status{display:inline-flex;align-items:center;gap:4px;font-size:0.68rem;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;margin-bottom:9px}
-.drop-status.sealed{color:var(--gold)}
-.drop-status.opened{color:var(--teal)}
-.drop-title-txt{font-family:'Syne',sans-serif;font-weight:700;font-size:0.9rem;margin-bottom:5px}
-.drop-from{font-size:0.75rem;color:var(--text3);margin-bottom:7px}
-.drop-msg{font-size:0.83rem;color:var(--text2);line-height:1.5;margin-bottom:11px;font-style:italic}
-.drop-foot{display:flex;align-items:center;justify-content:space-between}
-.drop-date{font-size:0.72rem;color:var(--text3)}
-.xbtn{padding:4px 11px;border-radius:7px;font-size:0.72rem;font-weight:600;background:rgba(29,161,242,0.08);border:1px solid rgba(29,161,242,0.2);color:#4dabf7;cursor:pointer;transition:all 0.2s;font-family:'DM Sans',sans-serif}
-.xbtn:hover{background:rgba(29,161,242,0.15)}
-.chip2{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:100px;font-size:0.68rem;font-weight:500}
+.dg{display:grid;grid-template-columns:repeat(auto-fill,minmax(265px,1fr));gap:13px}
+.dc{background:var(--card);border:1px solid var(--border);border-radius:var(--r2);padding:1.25rem;position:relative;overflow:hidden;transition:all 0.2s}
+.dc:hover{border-color:var(--border2)}
+.dc::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--gold2),var(--gold),transparent)}
+.dc.opened::before{background:linear-gradient(90deg,var(--teal2),var(--teal),transparent)}
+.dstat{display:inline-flex;align-items:center;gap:4px;font-size:0.66rem;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;margin-bottom:8px}
+.dstat.sealed{color:var(--gold)}
+.dstat.opened{color:var(--teal)}
+.dtxt{font-family:'Syne',sans-serif;font-weight:700;font-size:0.88rem;margin-bottom:5px}
+.dfrom{font-size:0.73rem;color:var(--text3);margin-bottom:6px}
+.dmsg{font-size:0.81rem;color:var(--text2);line-height:1.5;margin-bottom:10px;font-style:italic}
+.dfoot{display:flex;align-items:center;justify-content:space-between}
+.ddate{font-size:0.7rem;color:var(--text3)}
+.xbtn{padding:4px 11px;border-radius:7px;font-size:0.7rem;font-weight:600;background:rgba(29,161,242,0.08);border:1px solid rgba(29,161,242,0.2);color:#4dabf7;cursor:pointer;transition:all 0.2s;font-family:'DM Sans',sans-serif}
+.xbtn:hover{background:rgba(29,161,242,0.16)}
+.chip{display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:100px;font-size:0.66rem;font-weight:500}
 
-/* FORMS */
-.vault-wrap{max-width:620px;margin:0 auto}
-.v-tabs{display:flex;gap:3px;background:var(--card2);border-radius:12px;padding:4px;margin-bottom:1.8rem;border:1px solid var(--border)}
-.v-tab{flex:1;padding:9px;border-radius:9px;text-align:center;font-size:0.83rem;font-weight:500;cursor:pointer;transition:all 0.2s;color:var(--text2);background:none;border:none;font-family:'DM Sans',sans-serif}
-.v-tab.active{background:var(--bg3);color:var(--text);box-shadow:0 1px 6px rgba(0,0,0,0.4)}
-.fg{margin-bottom:1.2rem}
-.fl{display:block;font-size:0.78rem;font-weight:500;color:var(--text2);margin-bottom:7px;letter-spacing:0.02em}
-.fi,.ft,.fs{width:100%;background:var(--card2);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:0.88rem;transition:border-color 0.2s;outline:none}
-.fi,.fs{padding:10px 13px;height:43px}
-.ft{padding:11px 13px;resize:vertical;min-height:95px;line-height:1.5}
+/* ======= IMPROVED TABS ======= */
+.tab-shell{
+  background:var(--bg3);
+  border:1px solid var(--border2);
+  border-radius:18px;
+  padding:5px;
+  display:inline-flex;
+  gap:0;
+  margin-bottom:2rem;
+  width:100%;
+  position:relative;
+}
+.tab-btn{
+  flex:1;padding:11px 16px;border-radius:14px;
+  font-size:0.83rem;font-weight:500;cursor:pointer;
+  transition:all 0.25s;color:var(--text3);
+  background:none;border:none;font-family:'DM Sans',sans-serif;
+  display:flex;align-items:center;justify-content:center;gap:7px;
+  position:relative;z-index:1;
+}
+.tab-btn.active{
+  background:linear-gradient(135deg,rgba(0,198,255,0.18),rgba(0,229,200,0.1));
+  color:var(--text);
+  border:1px solid rgba(0,198,255,0.3);
+  box-shadow:0 2px 12px rgba(0,198,255,0.15);
+}
+.tab-btn:not(.active):hover{color:var(--text2);background:rgba(255,255,255,0.03)}
+.tab-icon{font-size:1rem}
+.tab-label{font-size:0.82rem;font-weight:500}
+.tab-count{
+  padding:1px 6px;border-radius:100px;font-size:0.65rem;font-weight:700;
+  background:rgba(0,198,255,0.15);color:var(--accent);
+  border:1px solid rgba(0,198,255,0.2);
+}
+
+/* VAULT / FORMS */
+.vault-wrap{max-width:640px;margin:0 auto}
+.fg{margin-bottom:1.15rem}
+.fl{display:block;font-size:0.77rem;font-weight:500;color:var(--text2);margin-bottom:6px;letter-spacing:0.02em}
+.fi,.ft,.fs{width:100%;background:var(--card2);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:0.87rem;transition:border-color 0.2s;outline:none}
+.fi,.fs{padding:10px 13px;height:42px}
+.ft{padding:11px 13px;resize:vertical;min-height:90px;line-height:1.5}
 .fi:focus,.ft:focus,.fs:focus{border-color:rgba(0,198,255,0.5)}
 .fs{cursor:pointer;appearance:none}
 .fs option{background:var(--bg3)}
-.rg{display:flex;gap:7px;flex-wrap:wrap}
-.ro{padding:7px 14px;border-radius:8px;border:1px solid var(--border);font-size:0.8rem;font-weight:500;cursor:pointer;transition:all 0.2s;color:var(--text2);background:var(--card2)}
+.rg{display:flex;gap:6px;flex-wrap:wrap}
+.ro{padding:7px 13px;border-radius:8px;border:1px solid var(--border);font-size:0.78rem;font-weight:500;cursor:pointer;transition:all 0.2s;color:var(--text2);background:var(--card2)}
 .ro.on{border-color:rgba(0,198,255,0.5);color:var(--accent);background:rgba(0,198,255,0.08)}
-.frow{display:grid;grid-template-columns:1fr 1fr;gap:11px}
-.sbtn{
-  width:100%;padding:13px;border-radius:12px;margin-top:7px;
-  background:linear-gradient(135deg,var(--accent),var(--teal));
-  color:#020b14;border:none;font-family:'Syne',sans-serif;font-weight:700;
-  font-size:0.92rem;cursor:pointer;transition:all 0.22s;letter-spacing:0.02em;
-}
-.sbtn:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(0,198,255,0.3)}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.sbtn{width:100%;padding:13px;border-radius:12px;margin-top:6px;background:linear-gradient(135deg,var(--accent),var(--teal));color:#020b14;border:none;font-family:'Syne',sans-serif;font-weight:700;font-size:0.9rem;cursor:pointer;transition:all 0.22s;letter-spacing:0.02em}
+.sbtn:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(0,198,255,0.3)}
 .sbtn:disabled{opacity:0.5;cursor:not-allowed;transform:none}
-.info-box{background:rgba(0,198,255,0.04);border:1px solid rgba(0,198,255,0.15);border-radius:12px;padding:14px 16px;margin-bottom:1.4rem;font-size:0.82rem;color:var(--text2);line-height:1.6}
-.warn-box{background:rgba(232,201,106,0.05);border:1px solid rgba(232,201,106,0.2);border-radius:12px;padding:14px 16px;margin-bottom:1.4rem}
-.warn-title{font-size:0.82rem;font-weight:600;color:var(--gold);margin-bottom:4px}
-.warn-body{font-size:0.8rem;color:var(--text2);line-height:1.5}
+.info-box{background:rgba(0,198,255,0.04);border:1px solid rgba(0,198,255,0.15);border-radius:12px;padding:13px 15px;margin-bottom:1.3rem;font-size:0.8rem;color:var(--text2);line-height:1.6}
+.warn-box{background:rgba(232,201,106,0.05);border:1px solid rgba(232,201,106,0.2);border-radius:12px;padding:13px 15px;margin-bottom:1.3rem}
+.warn-title{font-size:0.8rem;font-weight:600;color:var(--gold);margin-bottom:3px}
+.warn-body{font-size:0.78rem;color:var(--text2);line-height:1.5}
 
-/* PROFILE */
-.prof-header{
-  background:linear-gradient(135deg,rgba(0,198,255,0.05),rgba(0,229,200,0.03));
-  border:1px solid var(--border);border-radius:var(--r2);
-  padding:1.8rem;margin-bottom:1.8rem;display:flex;gap:1.8rem;align-items:flex-start;
+/* X FETCH ROW */
+.x-fetch-row{display:flex;gap:8px;align-items:flex-start;margin-bottom:1.3rem}
+.x-fetch-row .fi{flex:1;height:42px}
+.fetch-btn{padding:0 16px;height:42px;border-radius:10px;background:rgba(29,161,242,0.12);border:1px solid rgba(29,161,242,0.3);color:#4dabf7;font-size:0.8rem;font-weight:600;cursor:pointer;transition:all 0.2s;white-space:nowrap;font-family:'DM Sans',sans-serif;flex-shrink:0}
+.fetch-btn:hover{background:rgba(29,161,242,0.2);border-color:#4dabf7}
+.x-profile-card{background:var(--card2);border:1px solid rgba(29,161,242,0.2);border-radius:14px;padding:14px;margin-bottom:1.3rem;display:none;animation:fu 0.3s ease}
+.x-profile-card.show{display:flex;gap:12px;align-items:center}
+.x-pfp{width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#1DA1F2,#0d7ab8);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1.1rem;color:#fff;flex-shrink:0;font-family:'Syne',sans-serif}
+.x-info{flex:1}
+.x-name{font-weight:600;font-size:0.9rem;margin-bottom:2px}
+.x-handle-txt{font-size:0.77rem;color:#4dabf7}
+.x-bio-txt{font-size:0.77rem;color:var(--text2);margin-top:4px;line-height:1.4}
+.x-verified{display:inline-flex;align-items:center;gap:3px;background:rgba(29,161,242,0.1);border:1px solid rgba(29,161,242,0.2);border-radius:100px;padding:2px 8px;font-size:0.65rem;color:#4dabf7;font-weight:600;margin-top:5px}
+.x-not-found{background:rgba(231,76,60,0.08);border:1px solid rgba(231,76,60,0.2);border-radius:10px;padding:10px 14px;font-size:0.8rem;color:#e74c3c;margin-bottom:1.3rem;display:none}
+.x-not-found.show{display:block}
+
+/* ======= SHARE RESULT CARD (post-action) ======= */
+.share-result{
+  background:linear-gradient(135deg,rgba(0,198,255,0.06),rgba(0,229,200,0.03));
+  border:1px solid rgba(0,198,255,0.25);
+  border-radius:18px;padding:1.4rem;
+  margin-top:1.2rem;display:none;animation:fu 0.4s ease;
 }
-.prof-ava{width:76px;height:76px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1.3rem;flex-shrink:0;border:2px solid rgba(0,198,255,0.4)}
-.prof-nm{font-family:'Syne',sans-serif;font-weight:800;font-size:1.4rem;letter-spacing:-0.02em;margin-bottom:3px}
-.prof-hd{font-size:0.82rem;color:var(--text3);margin-bottom:7px}
-.prof-bio{font-size:0.87rem;color:var(--text2);line-height:1.6;margin-bottom:10px}
-.prof-nums{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border-top:1px solid var(--border);margin-top:1.4rem;padding-top:1.4rem}
-.pn{text-align:center}
-.pn-n{font-family:'Syne',sans-serif;font-weight:800;font-size:1.25rem;color:var(--text)}
-.pn-l{font-size:0.68rem;color:var(--text3);text-transform:uppercase;letter-spacing:0.05em;margin-top:1px}
-.tabs-strip{display:flex;border-bottom:1px solid var(--border);margin-bottom:1.4rem}
-.ts-item{padding:9px 18px;font-size:0.82rem;font-weight:500;color:var(--text2);cursor:pointer;border-bottom:2px solid transparent;transition:all 0.2s;background:none;border-top:none;border-left:none;border-right:none;font-family:'DM Sans',sans-serif}
-.ts-item:hover{color:var(--text)}
-.ts-item.active{color:var(--accent);border-bottom-color:var(--accent)}
+.share-result.show{display:block}
+.sr-title{font-family:'Syne',sans-serif;font-weight:700;font-size:1rem;color:var(--teal);margin-bottom:4px}
+.sr-sub{font-size:0.8rem;color:var(--text2);margin-bottom:1rem}
+.sr-btns{display:flex;gap:8px;flex-wrap:wrap}
+.sr-btn{padding:9px 18px;border-radius:10px;font-size:0.82rem;font-weight:600;cursor:pointer;transition:all 0.2s;font-family:'DM Sans',sans-serif;display:flex;align-items:center;gap:6px;border:none}
+.sr-btn.x{background:linear-gradient(135deg,#1DA1F2,#0d7ab8);color:#fff}
+.sr-btn.x:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(29,161,242,0.35)}
+.sr-btn.banner{background:linear-gradient(135deg,var(--accent),var(--teal));color:#020b14}
+.sr-btn.banner:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(0,198,255,0.3)}
+.sr-btn.copy{background:var(--card2);color:var(--text);border:1px solid var(--border2)}
+.sr-btn.copy:hover{border-color:var(--accent)}
 
-/* LB */
-.lb{display:flex;flex-direction:column;gap:7px}
-.lb-row{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:11px 14px}
-.lb-rk{width:27px;height:27px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:0.78rem;flex-shrink:0}
-.rk-g{background:rgba(232,201,106,0.12);color:var(--gold)}
-.rk-s{background:rgba(180,178,169,0.12);color:#aaa}
-.rk-b{background:rgba(239,159,39,0.12);color:#ef9f27}
-.rk-d{background:var(--card2);color:var(--text3)}
-.lb-nm{font-weight:600;font-size:0.87rem;flex:1}
-.lb-sc{font-family:'Syne',sans-serif;font-weight:700;font-size:0.87rem;color:var(--accent)}
+/* ======= SHARE BANNER POPUP ======= */
+.banner-overlay{position:fixed;inset:0;background:rgba(2,11,20,0.93);backdrop-filter:blur(16px);z-index:500;display:none;align-items:center;justify-content:center;padding:1.5rem}
+.banner-overlay.show{display:flex}
+.banner-modal{background:var(--card);border:1px solid var(--border2);border-radius:24px;padding:0;max-width:560px;width:100%;position:relative;overflow:hidden;animation:mUp 0.3s ease}
+@keyframes mUp{from{opacity:0;transform:translateY(20px) scale(0.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+.bm-close{position:absolute;top:1rem;right:1rem;width:32px;height:32px;background:rgba(0,0,0,0.4);border:1px solid var(--border);border-radius:8px;color:var(--text2);cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;z-index:10;transition:all 0.2s}
+.bm-close:hover{color:var(--text);background:var(--card2)}
+.banner-canvas-wrap{width:100%;background:#020b14;position:relative}
+#shareCanvas{width:100%;display:block;border-radius:0}
+.bm-actions{padding:1.2rem 1.4rem;display:flex;gap:8px;flex-wrap:wrap;border-top:1px solid var(--border)}
+.bm-btn{flex:1;padding:11px;border-radius:11px;font-size:0.84rem;font-weight:600;cursor:pointer;transition:all 0.22s;font-family:'Syne',sans-serif;display:flex;align-items:center;justify-content:center;gap:7px;border:none;min-width:120px}
+.bm-btn.x{background:linear-gradient(135deg,#1DA1F2,#0d7ab8);color:#fff}
+.bm-btn.x:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(29,161,242,0.35)}
+.bm-btn.dl{background:linear-gradient(135deg,var(--accent),var(--teal));color:#020b14}
+.bm-btn.dl:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(0,198,255,0.3)}
+.bm-btn.cl{background:var(--card2);color:var(--text);border:1px solid var(--border2)}
 
 /* MODALS */
 .overlay{position:fixed;inset:0;background:rgba(2,11,20,0.88);backdrop-filter:blur(10px);z-index:300;display:flex;align-items:center;justify-content:center;padding:1.5rem}
-.modal{background:var(--card);border:1px solid var(--border2);border-radius:var(--r2);padding:1.8rem;max-width:460px;width:100%;position:relative;animation:mUp 0.28s ease}
-@keyframes mUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+.modal{background:var(--card);border:1px solid var(--border2);border-radius:var(--r2);padding:1.8rem;max-width:450px;width:100%;position:relative;animation:mUp 0.28s ease;max-height:90vh;overflow-y:auto}
 .m-close{position:absolute;top:1rem;right:1rem;width:30px;height:30px;background:var(--card2);border:1px solid var(--border);border-radius:7px;color:var(--text2);cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:all 0.2s}
 .m-close:hover{color:var(--text)}
 .m-title{font-family:'Syne',sans-serif;font-weight:700;font-size:1.1rem;margin-bottom:5px}
-.m-sub{font-size:0.82rem;color:var(--text2);margin-bottom:1.4rem;line-height:1.55}
-.conn-opts{display:flex;flex-direction:column;gap:9px}
-.conn-opt{display:flex;align-items:center;gap:12px;padding:13px 15px;background:var(--card2);border:1px solid var(--border);border-radius:12px;cursor:pointer;transition:all 0.2s}
-.conn-opt:hover{border-color:rgba(0,198,255,0.35);background:var(--bg3)}
-.conn-ico{width:38px;height:38px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:1.15rem;background:var(--bg3);flex-shrink:0}
-.conn-name{font-weight:600;font-size:0.87rem}
-.conn-sub{font-size:0.75rem;color:var(--text3);margin-top:1px}
-.divx{text-align:center;color:var(--text3);font-size:0.77rem;margin:1rem 0;position:relative}
+.m-sub{font-size:0.8rem;color:var(--text2);margin-bottom:1.3rem;line-height:1.55}
+.conn-opts{display:flex;flex-direction:column;gap:8px}
+.co{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--card2);border:1px solid var(--border);border-radius:12px;cursor:pointer;transition:all 0.2s}
+.co:hover{border-color:rgba(0,198,255,0.35);background:var(--bg3)}
+.co-ico{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;background:var(--bg3);flex-shrink:0}
+.co-nm{font-weight:600;font-size:0.86rem}
+.co-sb{font-size:0.73rem;color:var(--text3);margin-top:1px}
+.divx{text-align:center;color:var(--text3);font-size:0.75rem;margin:.9rem 0;position:relative}
 .divx::before,.divx::after{content:'';position:absolute;top:50%;width:43%;height:1px;background:var(--border)}
 .divx::before{left:0}.divx::after{right:0}
 
-/* TICKER */
-.ticker{background:var(--card2);border-bottom:1px solid var(--border);padding:7px 0;overflow:hidden;white-space:nowrap;position:fixed;top:66px;left:0;right:0;z-index:199}
-.ticker-inner{display:inline-flex;gap:48px;animation:tick 35s linear infinite}
-@keyframes tick{from{transform:translateX(0)}to{transform:translateX(-50%)}}
-.t-item{font-size:0.74rem;color:var(--text3);display:inline-flex;align-items:center;gap:5px}
-.t-item em{color:var(--accent);font-style:normal}
+/* PROFILE */
+.ph{background:linear-gradient(135deg,rgba(0,198,255,0.05),rgba(0,229,200,0.03));border:1px solid var(--border);border-radius:var(--r2);padding:1.8rem;margin-bottom:1.8rem;display:flex;gap:1.8rem;align-items:flex-start}
+.pa{width:74px;height:74px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1.3rem;flex-shrink:0;border:2px solid rgba(0,198,255,0.4)}
+.pnm{font-family:'Syne',sans-serif;font-weight:800;font-size:1.35rem;letter-spacing:-0.02em;margin-bottom:3px}
+.phd{font-size:0.8rem;color:var(--text3);margin-bottom:7px}
+.pbio{font-size:0.85rem;color:var(--text2);line-height:1.6;margin-bottom:10px}
+.pnums{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border-top:1px solid var(--border);margin-top:1.3rem;padding-top:1.3rem}
+.pn{text-align:center}
+.pnn{font-family:'Syne',sans-serif;font-weight:800;font-size:1.2rem;color:var(--text)}
+.pnl{font-size:0.66rem;color:var(--text3);text-transform:uppercase;letter-spacing:0.05em;margin-top:1px}
+
+/* LEADERBOARD */
+.lb{display:flex;flex-direction:column;gap:7px}
+.lr{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:10px 13px}
+.lrk{width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:0.76rem;flex-shrink:0}
+.rkg{background:rgba(232,201,106,0.12);color:var(--gold)}
+.rks{background:rgba(180,178,169,0.12);color:#aaa}
+.rkb{background:rgba(239,159,39,0.12);color:#ef9f27}
+.rkd{background:var(--card2);color:var(--text3)}
+.lnm{font-weight:600;font-size:0.85rem;flex:1}
+.lsc{font-family:'Syne',sans-serif;font-weight:700;font-size:0.85rem;color:var(--accent)}
 
 /* TOAST */
-.toast{position:fixed;bottom:1.8rem;right:1.8rem;z-index:400;background:var(--card2);border:1px solid var(--border2);border-radius:12px;padding:12px 16px;font-size:0.84rem;display:flex;align-items:center;gap:9px;transform:translateX(130%);transition:transform 0.3s ease;max-width:300px;box-shadow:0 8px 30px rgba(0,0,0,0.4)}
+.toast{position:fixed;bottom:1.8rem;right:1.8rem;z-index:600;background:var(--card2);border:1px solid var(--border2);border-radius:12px;padding:11px 15px;font-size:0.82rem;display:flex;align-items:center;gap:8px;transform:translateX(130%);transition:transform 0.3s ease;max-width:290px;box-shadow:0 8px 28px rgba(0,0,0,0.4)}
 .toast.show{transform:translateX(0)}
 
 /* SEARCH */
-.srch-wrap{position:relative;margin-bottom:1.4rem}
-.srch-ico{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:0.85rem}
-.srch{width:100%;padding:10px 13px 10px 36px;background:var(--card2);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:0.87rem;outline:none;transition:border-color 0.2s}
+.sw{position:relative;margin-bottom:1.3rem}
+.si{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:0.83rem}
+.srch{width:100%;padding:10px 13px 10px 34px;background:var(--card2);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:0.85rem;outline:none;transition:border-color 0.2s}
 .srch:focus{border-color:rgba(0,198,255,0.4)}
 
-/* WALLET CONNECT STATUS */
-.wc-status{background:rgba(0,229,200,0.04);border:1px solid rgba(0,229,200,0.15);border-radius:12px;padding:14px 16px;margin-bottom:1.4rem;display:flex;align-items:center;gap:10px}
-.wc-icon{font-size:1.3rem}
-.wc-txt{font-size:0.82rem;color:var(--text2);line-height:1.5}
-.wc-txt strong{color:var(--teal)}
+/* FILTER TABS */
+.ftabs{display:flex;gap:6px;margin-bottom:1.3rem;flex-wrap:wrap}
 
 /* SCROLLBAR */
 ::-webkit-scrollbar{width:5px}
@@ -360,40 +310,32 @@ nav{
 
 /* EMPTY */
 .empty{text-align:center;padding:3.5rem 2rem;color:var(--text3)}
-.empty-icon{font-size:2.2rem;margin-bottom:.8rem}
-
-/* FILTER TABS */
-.ftabs{display:flex;gap:6px;margin-bottom:1.4rem;flex-wrap:wrap}
 </style>
 </head>
 <body>
-
 <canvas id="bgCanvas"></canvas>
 
 <!-- TICKER -->
-<div class="ticker" id="ticker">
-  <div class="ticker-inner">
-    <span class="t-item">🔒 <em>@YoungestGrandad</em> sealed a drop · opens in 6 months</span>
-    <span class="t-item">✅ <em>@ritualbuilder</em> vouched for @kency17</span>
-    <span class="t-item">🎉 Drop for mainnet just unlocked · 47 hearts</span>
-    <span class="t-item">🏗 <em>@dotmantissa</em> shipped Ritual Learn · 12 vouches</span>
-    <span class="t-item">🔒 <em>@maharshi_eth</em> sealed a community drop · 8 months to go</span>
-    <span class="t-item">✅ <em>@tutufly_yy</em> vouched for @aliorbz — ships real things</span>
-    <span class="t-item">⚡ <em>Ritual Network</em> · The Social Layer is live</span>
-    <span class="t-item">🔒 <em>@YoungestGrandad</em> sealed a drop · opens in 6 months</span>
-    <span class="t-item">✅ <em>@ritualbuilder</em> vouched for @kency17</span>
-    <span class="t-item">🎉 Drop for mainnet just unlocked · 47 hearts</span>
-    <span class="t-item">🏗 <em>@dotmantissa</em> shipped Ritual Learn · 12 vouches</span>
-    <span class="t-item">🔒 <em>@maharshi_eth</em> sealed a community drop · 8 months to go</span>
+<div class="ticker">
+  <div class="ti">
+    <span>🔒 <em>@YoungestGrandad</em> sealed a drop · opens Dec 2025</span>
+    <span>✅ <em>@ritualbuilder</em> vouched for @kency17</span>
+    <span>🎉 Drop for mainnet just unlocked · 47 hearts</span>
+    <span>🏗 <em>@dotmantissa</em> shipped Ritual Learn · 12 vouches</span>
+    <span>🔒 <em>@maharshi_eth</em> sealed a community drop · 8 months to go</span>
+    <span>✅ <em>@tutufly_yy</em> vouched for @aliorbz — ships real things</span>
+    <span>⚡ <em>Ritual Network</em> · The Social Layer is live</span>
+    <span>🔒 <em>@YoungestGrandad</em> sealed a drop · opens Dec 2025</span>
+    <span>✅ <em>@ritualbuilder</em> vouched for @kency17</span>
+    <span>🎉 Drop for mainnet just unlocked · 47 hearts</span>
+    <span>🏗 <em>@dotmantissa</em> shipped Ritual Learn · 12 vouches</span>
+    <span>🔒 <em>@maharshi_eth</em> sealed a community drop · 8 months to go</span>
   </div>
 </div>
 
 <!-- NAV -->
 <nav>
-  <div class="logo" onclick="go('home')">
-    <div class="logo-ring"></div>
-    Ritual Network
-  </div>
+  <div class="logo" onclick="go('home')"><div class="logo-ring"></div>Ritual Network</div>
   <div class="nav-links">
     <button class="nav-link active" onclick="go('home',this)">Home</button>
     <button class="nav-link" onclick="go('drops',this)">Legacy Drops</button>
@@ -401,47 +343,44 @@ nav{
     <button class="nav-link" onclick="go('leaderboard',this)">Leaderboard</button>
     <button class="nav-link" onclick="go('profile',this)">My Profile</button>
   </div>
-  <div class="wallet-status">
-    <div class="net-badge" id="netBadge"><span class="net-dot"></span>RITUAL TESTNET</div>
-    <button class="wallet-btn" id="walletBtn" onclick="openWallet()">Connect Wallet</button>
+  <div class="nav-r">
+    <div class="net-badge" id="netBadge"><span class="nd"></span>RITUAL TESTNET</div>
+    <button class="wbtn" id="walletBtn" onclick="openWallet()">Connect Wallet</button>
   </div>
 </nav>
 
 <!-- HOME -->
-<div class="page active" id="page-home" style="padding-top:calc(66px + 32px)">
+<div class="page active" id="page-home">
   <div class="hero">
-    <div class="hero-nodes" id="heroNodes"></div>
     <div class="hero-eyebrow">⚡ The Social Layer of Ritual</div>
-    <h1>Build your mark.<br><span class="line2">Seal your word.</span></h1>
-    <p class="hero-sub">Onchain identity, reputation & legacy for the Ritual community. Create your builder profile, seal future drops, vouch for people you trust.</p>
-    <div class="hero-actions">
+    <h1>Build your mark.<br><span class="hl">Seal your word.</span></h1>
+    <p class="hero-sub">Onchain identity, reputation & legacy for the Ritual community. Seal future drops, vouch for builders, and leave your mark forever.</p>
+    <div class="hero-btns">
       <button class="btn-glow" onclick="openWallet()">Create Your Profile</button>
       <button class="btn-outline" onclick="go('drops',document.querySelectorAll('.nav-link')[1])">Explore Legacy Drops</button>
     </div>
   </div>
-
   <div class="stats-strip">
-    <div class="stat-cell"><div class="stat-n" id="s1">0</div><div class="stat-l">Builders</div></div>
-    <div class="stat-cell"><div class="stat-n" id="s2">0</div><div class="stat-l">Legacy Drops</div></div>
-    <div class="stat-cell"><div class="stat-n" id="s3">0</div><div class="stat-l">Vouches Given</div></div>
-    <div class="stat-cell"><div class="stat-n" id="s4">0</div><div class="stat-l">Apps Shipped</div></div>
+    <div class="sc"><div class="sn" id="s1">0</div><div class="sl">Builders</div></div>
+    <div class="sc"><div class="sn" id="s2">0</div><div class="sl">Legacy Drops</div></div>
+    <div class="sc"><div class="sn" id="s3">0</div><div class="sl">Vouches Given</div></div>
+    <div class="sc"><div class="sn" id="s4">0</div><div class="sl">Apps Shipped</div></div>
   </div>
-
-  <div class="section">
+  <div class="sec">
     <div class="sec-hd">
-      <div><div class="sec-title">Live Feed</div><div class="sec-sub" style="margin-top:3px">What the Ritual community is doing right now</div></div>
-      <div class="sec-link" onclick="go('drops',document.querySelectorAll('.nav-link')[1])">All drops →</div>
+      <div><div class="sec-title">Live Feed</div><div class="sec-sub" style="margin-top:3px">What the community is doing right now</div></div>
+      <div class="sec-lnk" onclick="go('drops',document.querySelectorAll('.nav-link')[1])">All drops →</div>
     </div>
     <div class="feed" id="homeFeed"></div>
   </div>
 </div>
 
-<!-- DROPS -->
-<div class="page" id="page-drops" style="padding-top:calc(66px + 32px)">
-  <div class="section">
+<!-- DROPS PAGE -->
+<div class="page" id="page-drops">
+  <div class="sec">
     <div class="sec-hd">
-      <div><div class="sec-title">Legacy Drops Wall</div><div class="sec-sub" style="margin-top:3px">Messages sealed in time — opening to the community</div></div>
-      <button class="btn-glow" style="padding:9px 20px;font-size:0.82rem" onclick="go('seal',document.querySelectorAll('.nav-link')[4])">+ Seal a Drop</button>
+      <div><div class="sec-title">Legacy Drops Wall</div><div class="sec-sub" style="margin-top:3px">Messages sealed in time</div></div>
+      <button class="btn-glow" style="padding:9px 20px;font-size:0.8rem" onclick="go('seal',document.querySelectorAll('.nav-link')[4])">+ Seal a Drop</button>
     </div>
     <div class="ftabs" id="dropFilters">
       <button class="ro on" onclick="filterDrops('all',this)">All</button>
@@ -449,54 +388,84 @@ nav{
       <button class="ro" onclick="filterDrops('opened',this)">🎉 Opened</button>
       <button class="ro" onclick="filterDrops('community',this)">🌐 Community</button>
     </div>
-    <div class="drops-grid" id="dropsGrid"></div>
+    <div class="dg" id="dropsGrid"></div>
   </div>
 </div>
 
-<!-- BUILDERS -->
-<div class="page" id="page-builders" style="padding-top:calc(66px + 32px)">
-  <div class="section">
-    <div class="sec-hd">
-      <div><div class="sec-title">Builder Directory</div><div class="sec-sub" style="margin-top:3px">The people building the Ritual ecosystem</div></div>
-    </div>
-    <div class="srch-wrap"><span class="srch-ico">🔍</span><input class="srch" type="text" placeholder="Search builders, X handles, skills..." oninput="searchBld(this.value)"></div>
-    <div class="bld-grid" id="bldGrid"></div>
+<!-- BUILDERS PAGE -->
+<div class="page" id="page-builders">
+  <div class="sec">
+    <div class="sec-hd"><div><div class="sec-title">Builder Directory</div><div class="sec-sub" style="margin-top:3px">The people building the Ritual ecosystem</div></div></div>
+    <div class="sw"><span class="si">🔍</span><input class="srch" type="text" placeholder="Search builders, X handles, skills..." oninput="searchBld(this.value)"></div>
+    <div class="bg" id="bldGrid"></div>
   </div>
 </div>
 
 <!-- LEADERBOARD -->
-<div class="page" id="page-leaderboard" style="padding-top:calc(66px + 32px)">
-  <div class="section">
+<div class="page" id="page-leaderboard">
+  <div class="sec">
     <div class="sec-hd"><div><div class="sec-title">Builder Leaderboard</div><div class="sec-sub" style="margin-top:3px">Ranked by reputation, vouches, and apps shipped</div></div></div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:2rem">
-      <div><div style="font-size:0.75rem;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:11px">Top Vouched</div><div class="lb" id="lbV"></div></div>
-      <div><div style="font-size:0.75rem;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:11px">Most Apps Shipped</div><div class="lb" id="lbA"></div></div>
+      <div><div style="font-size:0.73rem;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:10px">Top Vouched</div><div class="lb" id="lbV"></div></div>
+      <div><div style="font-size:0.73rem;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:10px">Most Apps Shipped</div><div class="lb" id="lbA"></div></div>
     </div>
   </div>
 </div>
 
 <!-- PROFILE -->
-<div class="page" id="page-profile" style="padding-top:calc(66px + 32px)">
-  <div class="section" id="profContent"></div>
+<div class="page" id="page-profile">
+  <div class="sec" id="profContent"></div>
 </div>
 
-<!-- SEAL -->
-<div class="page" id="page-seal" style="padding-top:calc(66px + 32px)">
-  <div class="section">
-    <div class="sec-hd"><div><div class="sec-title">Seal a Legacy Drop</div><div class="sec-sub" style="margin-top:3px">Write a message sealed onchain — revealed on the date you choose</div></div></div>
+<!-- SEAL / ACTION PAGE -->
+<div class="page" id="page-seal">
+  <div class="sec">
+    <div class="sec-hd"><div><div class="sec-title">Seal · Vouch · Gift</div><div class="sec-sub" style="margin-top:3px">Take action — leave your mark on the Ritual ecosystem</div></div></div>
     <div class="vault-wrap">
-      <div class="v-tabs">
-        <button class="v-tab active" onclick="vTab(0,this)">📝 Write Drop</button>
-        <button class="v-tab" onclick="vTab(1,this)">👤 Vouch Builder</button>
-        <button class="v-tab" onclick="vTab(2,this)">🎁 Gift Tokens</button>
+
+      <!-- PROPER TABS -->
+      <div class="tab-shell">
+        <button class="tab-btn active" id="tab0" onclick="vTab(0)">
+          <span class="tab-icon">🔒</span>
+          <span class="tab-label">Write Drop</span>
+        </button>
+        <button class="tab-btn" id="tab1" onclick="vTab(1)">
+          <span class="tab-icon">✅</span>
+          <span class="tab-label">Vouch Builder</span>
+        </button>
+        <button class="tab-btn" id="tab2" onclick="vTab(2)">
+          <span class="tab-icon">🎁</span>
+          <span class="tab-label">Gift Tokens</span>
+        </button>
       </div>
-      <!-- TAB 0 -->
+
+      <!-- ===== TAB 0: WRITE DROP ===== -->
       <div id="vt0">
-        <div id="walletWarning" class="info-box" style="display:none">⚠️ Connect your wallet first to seal a drop onchain.</div>
+        <div id="dropWalletWarn" class="info-box" style="display:none">⚠️ Connect your wallet to seal a drop onchain.</div>
+
+        <!-- X FETCH FOR RECIPIENT -->
+        <div class="fg">
+          <label class="fl">Recipient X Account — Fetch Their Details</label>
+          <div class="x-fetch-row">
+            <input class="fi" id="dropXInput" placeholder="@recipienthandle (optional)">
+            <button class="fetch-btn" onclick="fetchX('drop')">🔍 Fetch Details</button>
+          </div>
+          <div class="x-profile-card" id="dropXProfile">
+            <div class="x-pfp" id="dropXPfp">?</div>
+            <div class="x-info">
+              <div class="x-name" id="dropXName"></div>
+              <div class="x-handle-txt" id="dropXHandle"></div>
+              <div class="x-bio-txt" id="dropXBio"></div>
+              <div class="x-verified">✓ Profile Found</div>
+            </div>
+          </div>
+          <div class="x-not-found" id="dropXNotFound">❌ User not found — please check the X handle and try again.</div>
+        </div>
+
         <div class="fg"><label class="fl">Message Title</label><input class="fi" id="dTitle" placeholder="e.g. To the community when mainnet launches"></div>
-        <div class="fg"><label class="fl">Your Message</label><textarea class="ft" id="dMsg" style="min-height:120px" placeholder="Write your message here. It will be sealed and revealed on the date you choose..."></textarea></div>
+        <div class="fg"><label class="fl">Your Message</label><textarea class="ft" id="dMsg" style="min-height:115px" placeholder="Write your message here. It will be sealed and revealed on the date you choose..."></textarea></div>
         <div class="frow">
-          <div class="fg"><label class="fl">Recipient (optional)</label><input class="fi" id="dTo" placeholder="@xhandle or leave blank"></div>
+          <div class="fg"><label class="fl">Recipient (auto-filled if fetched)</label><input class="fi" id="dTo" placeholder="@xhandle or leave blank"></div>
           <div class="fg"><label class="fl">Unlock Date</label><input class="fi" type="date" id="dDate" style="color-scheme:dark"></div>
         </div>
         <div class="fg">
@@ -517,36 +486,103 @@ nav{
           </div>
         </div>
         <button class="sbtn" onclick="sealDrop()">🔒 Seal This Drop</button>
-      </div>
-      <!-- TAB 1 -->
-      <div id="vt1" style="display:none">
-        <div class="info-box">Vouches are signed with your wallet address and permanently visible on a builder's public profile. They become their onchain reputation in the Ritual ecosystem.</div>
-        <div class="fg"><label class="fl">Builder's X Handle</label><input class="fi" placeholder="@builderhandle"></div>
-        <div class="fg"><label class="fl">Wallet Address (optional)</label><input class="fi" placeholder="0x..."></div>
-        <div class="fg"><label class="fl">Your Endorsement</label><textarea class="ft" placeholder="Ships consistently. Reliable contributor. Always helps the community..." style="min-height:75px" maxlength="200"></textarea><div style="font-size:0.72rem;color:var(--text3);margin-top:5px">Max 200 characters. Keep it real and specific.</div></div>
-        <div class="fg">
-          <label class="fl">Endorsing them as a...</label>
-          <div class="rg">
-            <div class="ro on" onclick="pickR(this.parentElement,this)">Builder</div>
-            <div class="ro" onclick="pickR(this.parentElement,this)">Shipper</div>
-            <div class="ro" onclick="pickR(this.parentElement,this)">Community helper</div>
-            <div class="ro" onclick="pickR(this.parentElement,this)">Collaborator</div>
+
+        <!-- POST-ACTION SHARE -->
+        <div class="share-result" id="dropShareResult">
+          <div class="sr-title">✨ Drop Sealed Successfully!</div>
+          <div class="sr-sub" id="dropShareSub"></div>
+          <div class="sr-btns">
+            <button class="sr-btn banner" onclick="showBanner('drop')">🖼 View Share Banner</button>
+            <button class="sr-btn x" onclick="shareToX('drop')">𝕏 Share to X</button>
+            <button class="sr-btn copy" onclick="copyShareText('drop')">📋 Copy Text</button>
           </div>
         </div>
-        <button class="sbtn" onclick="toast('✅ Vouch signed and recorded permanently on Ritual Network!')">✅ Sign & Vouch Permanently</button>
       </div>
-      <!-- TAB 2 -->
+
+      <!-- ===== TAB 1: VOUCH ===== -->
+      <div id="vt1" style="display:none">
+        <div class="info-box">Vouches are signed with your wallet and permanently visible on a builder's profile — their onchain reputation in Ritual.</div>
+
+        <!-- X FETCH FOR VOUCH TARGET -->
+        <div class="fg">
+          <label class="fl">Builder's X Account — Fetch Their Details</label>
+          <div class="x-fetch-row">
+            <input class="fi" id="vouchXInput" placeholder="@builderhandle">
+            <button class="fetch-btn" onclick="fetchX('vouch')">🔍 Fetch Details</button>
+          </div>
+          <div class="x-profile-card" id="vouchXProfile">
+            <div class="x-pfp" id="vouchXPfp">?</div>
+            <div class="x-info">
+              <div class="x-name" id="vouchXName"></div>
+              <div class="x-handle-txt" id="vouchXHandle"></div>
+              <div class="x-bio-txt" id="vouchXBio"></div>
+              <div class="x-verified">✓ Profile Found</div>
+            </div>
+          </div>
+          <div class="x-not-found" id="vouchXNotFound">❌ User not found — please check the X handle and try again.</div>
+        </div>
+
+        <div class="fg"><label class="fl">Their Wallet Address (optional)</label><input class="fi" id="vHandle2" placeholder="0x..."></div>
+        <div class="fg">
+          <label class="fl">Your Endorsement</label>
+          <textarea class="ft" id="vNote" placeholder="Ships consistently. Reliable contributor. Always helps the community..." style="min-height:80px" maxlength="200"></textarea>
+          <div style="font-size:0.72rem;color:var(--text3);margin-top:4px">Max 200 characters. Keep it real and specific.</div>
+        </div>
+        <div class="fg">
+          <label class="fl">Endorsing them as a...</label>
+          <div class="rg" id="vg3">
+            <div class="ro on" onclick="pickR('vg3',this)">🏗 Builder</div>
+            <div class="ro" onclick="pickR('vg3',this)">🚀 Shipper</div>
+            <div class="ro" onclick="pickR('vg3',this)">🤝 Community helper</div>
+            <div class="ro" onclick="pickR('vg3',this)">💡 Collaborator</div>
+          </div>
+        </div>
+        <button class="sbtn" onclick="doVouch()">✅ Sign & Vouch Permanently</button>
+
+        <!-- POST-ACTION SHARE -->
+        <div class="share-result" id="vouchShareResult">
+          <div class="sr-title">✅ Vouch Recorded Permanently!</div>
+          <div class="sr-sub" id="vouchShareSub"></div>
+          <div class="sr-btns">
+            <button class="sr-btn banner" onclick="showBanner('vouch')">🖼 View Share Banner</button>
+            <button class="sr-btn x" onclick="shareToX('vouch')">𝕏 Share to X</button>
+            <button class="sr-btn copy" onclick="copyShareText('vouch')">📋 Copy Text</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== TAB 2: GIFT ===== -->
       <div id="vt2" style="display:none">
         <div class="warn-box">
           <div class="warn-title">🎁 Testnet Token Gift</div>
-          <div class="warn-body">Send Ritual testnet tokens to another builder as a recognition gift. The recipient gets a notification and a shareable X card. <strong style="color:var(--gold)">Requires wallet connection to Ritual Testnet.</strong></div>
+          <div class="warn-body">Send Ritual testnet tokens as a recognition gift. Creates a real onchain record. <strong style="color:var(--gold)">Requires Ritual Testnet connection.</strong></div>
         </div>
-        <div id="giftWalletWarn" class="info-box" style="display:none">⚠️ Please connect your wallet to the Ritual Testnet before sending a gift.</div>
-        <div class="fg"><label class="fl">Recipient X Handle</label><input class="fi" id="giftTo" placeholder="@builderhandle"></div>
+        <div id="giftWalletWarn" class="info-box" style="display:none">⚠️ Connect your wallet to the Ritual Testnet first.</div>
+
+        <!-- X FETCH FOR GIFT RECIPIENT -->
+        <div class="fg">
+          <label class="fl">Recipient's X Account — Fetch Their Details</label>
+          <div class="x-fetch-row">
+            <input class="fi" id="giftXInput" placeholder="@recipienthandle">
+            <button class="fetch-btn" onclick="fetchX('gift')">🔍 Fetch Details</button>
+          </div>
+          <div class="x-profile-card" id="giftXProfile">
+            <div class="x-pfp" id="giftXPfp">?</div>
+            <div class="x-info">
+              <div class="x-name" id="giftXName"></div>
+              <div class="x-handle-txt" id="giftXHandle"></div>
+              <div class="x-bio-txt" id="giftXBio"></div>
+              <div class="x-verified">✓ Profile Found</div>
+            </div>
+          </div>
+          <div class="x-not-found" id="giftXNotFound">❌ User not found — please check the X handle and try again.</div>
+        </div>
+
         <div class="frow">
           <div class="fg"><label class="fl">Amount (RITUAL)</label><input class="fi" type="number" id="giftAmt" placeholder="100" min="1"></div>
-          <div class="fg"><label class="fl">Occasion</label>
-            <select class="fs">
+          <div class="fg">
+            <label class="fl">Occasion</label>
+            <select class="fs" id="giftOccasion">
               <option>Recognition 🏆</option>
               <option>Shipped something 🚀</option>
               <option>Helped me 🤝</option>
@@ -554,525 +590,645 @@ nav{
             </select>
           </div>
         </div>
-        <div class="fg"><label class="fl">Gift Message (optional)</label><input class="fi" id="giftMsg" placeholder="You shipped something awesome. Here's a small recognition..."></div>
+        <div class="fg"><label class="fl">Gift Message</label><input class="fi" id="giftMsg" placeholder="You shipped something awesome. Here's a small recognition..."></div>
         <button class="sbtn" id="giftBtn" onclick="sendGift()">🎁 Send Token Gift</button>
-        <div style="font-size:0.75rem;color:var(--text3);margin-top:10px;text-align:center">Note: This sends a record of your gift on Ritual Testnet. Real token transfer requires smart contract integration (v2).</div>
+        <div style="font-size:0.73rem;color:var(--text3);margin-top:8px;text-align:center">Records a gift transaction on Ritual Testnet. Real token transfers require smart contract (v2).</div>
+
+        <!-- POST-ACTION SHARE -->
+        <div class="share-result" id="giftShareResult">
+          <div class="sr-title">🎁 Gift Sent Successfully!</div>
+          <div class="sr-sub" id="giftShareSub"></div>
+          <div class="sr-btns">
+            <button class="sr-btn banner" onclick="showBanner('gift')">🖼 View Share Banner</button>
+            <button class="sr-btn x" onclick="shareToX('gift')">𝕏 Share to X</button>
+            <button class="sr-btn copy" onclick="copyShareText('gift')">📋 Copy Text</button>
+          </div>
+        </div>
       </div>
-    </div>
+
+    </div><!-- vault-wrap -->
   </div>
 </div>
 
 <!-- WALLET MODAL -->
 <div class="overlay" id="walletOverlay" style="display:none" onclick="closeBg(event,'walletOverlay')">
   <div class="modal">
-    <button class="m-close" onclick="closeOverlay('walletOverlay')">✕</button>
+    <button class="m-close" onclick="closeO('walletOverlay')">✕</button>
     <div class="m-title">Connect to Ritual Network</div>
-    <div class="m-sub">Connect your wallet to the Ritual Testnet and link your X handle to create your onchain identity.</div>
+    <div class="m-sub">Connect your wallet to Ritual Testnet and link your X handle to create your onchain identity.</div>
     <div class="conn-opts">
-      <div class="conn-opt" onclick="connectMM()">
-        <div class="conn-ico">🦊</div>
-        <div><div class="conn-name">MetaMask</div><div class="conn-sub">Connect to Ritual Testnet · Recommended</div></div>
-      </div>
-      <div class="conn-opt" onclick="connectWC()">
-        <div class="conn-ico">🔗</div>
-        <div><div class="conn-name">WalletConnect</div><div class="conn-sub">Mobile & desktop wallets</div></div>
-      </div>
-      <div class="conn-opt" onclick="connectCB()">
-        <div class="conn-ico">🔵</div>
-        <div><div class="conn-name">Coinbase Wallet</div><div class="conn-sub">Self-custody crypto wallet</div></div>
-      </div>
+      <div class="co" onclick="connectMM()"><div class="co-ico">🦊</div><div><div class="co-nm">MetaMask</div><div class="co-sb">Connect to Ritual Testnet · Recommended</div></div></div>
+      <div class="co" onclick="toast('ℹ️ Use MetaMask for now — WalletConnect requires backend setup.')"><div class="co-ico">🔗</div><div><div class="co-nm">WalletConnect</div><div class="co-sb">Mobile & desktop wallets</div></div></div>
+      <div class="co" onclick="toast('ℹ️ Add Ritual Testnet manually then use MetaMask option.')"><div class="co-ico">🔵</div><div><div class="co-nm">Coinbase Wallet</div><div class="co-sb">Self-custody wallet</div></div></div>
     </div>
-    <div class="divx">or enter manually to explore</div>
+    <div class="divx">or explore as guest</div>
     <div class="fg"><label class="fl">Wallet Address</label><input class="fi" id="mWallet" placeholder="0x..."></div>
     <div class="fg" style="margin-bottom:0"><label class="fl">Your X Handle</label><input class="fi" id="mX" placeholder="@yourhandle"></div>
-    <button class="sbtn" style="margin-top:1rem" onclick="manualConn()">Explore as Guest →</button>
-    <div style="font-size:0.73rem;color:var(--text3);margin-top:10px;text-align:center">For full onchain features, use MetaMask connected to Ritual Testnet (Chain ID: 1752890)</div>
+    <button class="sbtn" style="margin-top:1rem" onclick="manualConn()">Continue as Guest →</button>
+    <div style="font-size:0.71rem;color:var(--text3);margin-top:8px;text-align:center">Ritual Testnet Chain ID: 1752274 · RPC: ritual-testnet-rpc.eu-north-2.gateway.fm</div>
   </div>
 </div>
 
-<!-- VOUCH MODAL -->
+<!-- VOUCH QUICK MODAL -->
 <div class="overlay" id="vouchOverlay" style="display:none" onclick="closeBg(event,'vouchOverlay')">
   <div class="modal">
-    <button class="m-close" onclick="closeOverlay('vouchOverlay')">✕</button>
+    <button class="m-close" onclick="closeO('vouchOverlay')">✕</button>
     <div class="m-title">Vouch for a Builder</div>
-    <div class="m-sub">Your vouch is signed with your wallet and permanent — it becomes part of their onchain reputation.</div>
-    <div class="fg"><label class="fl">Builder's X Handle</label><input class="fi" id="vHandle" placeholder="@builderhandle"></div>
-    <div class="fg"><label class="fl">Your endorsement (1-2 lines)</label><input class="fi" id="vNote" placeholder="Ships consistently. Real builder." maxlength="100"></div>
-    <button class="sbtn" onclick="doVouch()">Sign & Vouch →</button>
+    <div class="m-sub">Wallet-signed and permanent — becomes part of their onchain reputation forever.</div>
+    <div class="fg"><label class="fl">Builder's X Handle</label><input class="fi" id="qvHandle" placeholder="@builderhandle"></div>
+    <div class="fg"><label class="fl">Your endorsement</label><input class="fi" id="qvNote" placeholder="Ships consistently. Real builder." maxlength="100"></div>
+    <button class="sbtn" onclick="quickVouch()">Sign & Vouch →</button>
+  </div>
+</div>
+
+<!-- SHARE BANNER POPUP -->
+<div class="banner-overlay" id="bannerOverlay">
+  <div class="banner-modal">
+    <button class="bm-close" onclick="closeBanner()">✕</button>
+    <div class="banner-canvas-wrap">
+      <canvas id="shareCanvas" width="560" height="300"></canvas>
+    </div>
+    <div class="bm-actions">
+      <button class="bm-btn x" onclick="shareFromBanner()">𝕏 Share to X</button>
+      <button class="bm-btn dl" onclick="downloadBanner()">⬇ Download Image</button>
+      <button class="bm-btn cl" onclick="closeBanner()">✕ Close</button>
+    </div>
   </div>
 </div>
 
 <!-- TOAST -->
-<div class="toast" id="toastEl">
-  <span id="toastIco">✅</span>
-  <span id="toastTxt"></span>
-</div>
+<div class="toast" id="toastEl"><span id="toastIco">✅</span><span id="toastTxt"></span></div>
 
 <script>
-// ─── RITUAL TESTNET CONFIG ───────────────────────────────
-const RITUAL_CHAIN_ID = '0x1ADED2'; // 1752274 decimal (Ritual testnet)
-const RITUAL_RPC = 'https://ritual-testnet-rpc.eu-north-2.gateway.fm/';
-const RITUAL_CHAIN = {
-  chainId: RITUAL_CHAIN_ID,
-  chainName: 'Ritual Testnet',
-  nativeCurrency: { name: 'ETH', symbol: 'ETH', decimals: 18 },
-  rpcUrls: [RITUAL_RPC],
-  blockExplorerUrls: ['https://ritual-testnet-explorer.eu-north-2.gateway.fm/']
-};
+// ─── RITUAL TESTNET ─────────────────────────────────
+const RIT_CHAIN_ID = '0x1ADED2';
+const RIT_RPC = 'https://ritual-testnet-rpc.eu-north-2.gateway.fm/';
+const RIT_CHAIN = {chainId:RIT_CHAIN_ID,chainName:'Ritual Testnet',nativeCurrency:{name:'ETH',symbol:'ETH',decimals:18},rpcUrls:[RIT_RPC],blockExplorerUrls:['https://ritual-testnet-explorer.eu-north-2.gateway.fm/']};
 
-// ─── DATA ─────────────────────────────────────────────────
-const BLDRS = [
-  {id:1,name:"Marvell D. Gregory",handle:"@YoungestGrandad",wallet:"0x1a2b...3c4d",bio:"Head of Sales at SalesTarget.ai · Youngest Grandad energy · Building for generations, not transactions.",tags:["Builder","Sales","Web3"],apps:3,vouches:14,drops:5,color:"#00c6ff",initials:"MG",active:true},
+// ─── DATA ───────────────────────────────────────────
+const BLDRS=[
+  {id:1,name:"Marvell D. Gregory",handle:"@YoungestGrandad",wallet:"0x1a2b...3c4d",bio:"Head of Sales at SalesTarget.ai · Youngest Grandad energy · Building for generations.",tags:["Builder","Sales","Web3"],apps:3,vouches:14,drops:5,color:"#00c6ff",initials:"MG",active:true},
   {id:2,name:"Maharshi Eth",handle:"@maharshi_17904",wallet:"0x2b3c...4d5e",bio:"Shipped Ritual Testnet Card · DeFi developer · On Ritual since genesis.",tags:["Dev","DeFi","Builder"],apps:2,vouches:22,drops:3,color:"#00e5c8",initials:"ME",active:true},
   {id:3,name:"Kency",handle:"@kency17",wallet:"0x3c4d...5e6f",bio:"GM Strike creator · Consistency is a superpower · Showing up every 24 hours.",tags:["Builder","Consistency"],apps:1,vouches:18,drops:7,color:"#e8c96a",initials:"KC",active:false},
   {id:4,name:"Dot Mantissa",handle:"@dotmantissa",wallet:"0x4d5e...6f7g",bio:"Built Ritual Learn · Educator first, developer second · Making Web3 accessible.",tags:["Education","Dev"],apps:1,vouches:31,drops:2,color:"#ff6b9d",initials:"DM",active:true},
   {id:5,name:"Thomas",handle:"@Thomas",wallet:"0x5e6f...7g8h",bio:"Siggy Streaks — streak culture in Web3 · Consistency protocol.",tags:["Gaming","Streaks"],apps:1,vouches:9,drops:4,color:"#a78bfa",initials:"TH",active:false},
   {id:6,name:"Tutufly",handle:"@tutufly_yy",wallet:"0x6f7g...8h9i",bio:"Siggy Surfers builder · Surf the Ritual wave · UX-obsessed.",tags:["Gaming","UX","Builder"],apps:1,vouches:16,drops:1,color:"#fb923c",initials:"TF",active:true},
 ];
-const DROPS_DATA = [
-  {id:1,from:"@YoungestGrandad",to:"Ritual Community",title:"When Mainnet Launches",msg:"I sealed this the day I started building on Ritual testnet. If you're reading this, we made it. The vision was real. To every builder who shipped something — this was worth it.",date:"2025-12-01",status:"sealed",type:"Message",unlock:"Dec 1, 2025"},
-  {id:2,from:"@maharshi_17904",to:"@kency17",title:"To the GM Striker",msg:"You showed up every single day when most people quit. That's a kind of discipline that builds empires. This is for you.",date:"2024-08-15",status:"opened",type:"Dedication",unlock:"Aug 15, 2024"},
-  {id:3,from:"@kency17",to:"Future Self",title:"A Note to My Future Self",msg:"Right now it feels uncertain. Keep going. The grind you're putting in on Ritual testnet — someone's watching. Stay consistent. You'll look back on this and smile.",date:"2025-06-01",status:"sealed",type:"Future self",unlock:"Jun 1, 2025"},
-  {id:4,from:"@dotmantissa",to:"Ritual Community",title:"For Every New Builder",msg:"When I built Ritual Learn I wanted one thing: that someone would use it to write their first smart contract. If that's you — welcome. This whole network is for you.",date:"2024-11-30",status:"opened",type:"Promise",unlock:"Nov 30, 2024"},
-  {id:5,from:"@YoungestGrandad",to:"@maharshi_17904",title:"A Dedication to a Real Builder",msg:"You shipped before anyone was watching. That's the mark of a true builder. This drop is yours — sealed the day I first used Ritual Testnet Card.",date:"2025-09-01",status:"sealed",type:"Dedication",unlock:"Sep 1, 2025"},
-  {id:6,from:"@tutufly_yy",to:"Ritual Community",title:"When Siggy Surfers Hits 1000 Players",msg:"Remember the small beginnings. Sealed this at 3 players — me, my friend, and someone from Discord I never met. This community is everything.",date:"2025-07-15",status:"sealed",type:"Message",unlock:"Jul 15, 2025"},
+const DROPS_DATA=[
+  {id:1,from:"@YoungestGrandad",to:"Ritual Community",title:"When Mainnet Launches",msg:"I sealed this the day I started building on Ritual testnet. If you're reading this, we made it.",date:"2025-12-01",status:"sealed",type:"Message",unlock:"Dec 1, 2025"},
+  {id:2,from:"@maharshi_17904",to:"@kency17",title:"To the GM Striker",msg:"You showed up every single day when most people quit. That discipline builds empires.",date:"2024-08-15",status:"opened",type:"Dedication",unlock:"Aug 15, 2024"},
+  {id:3,from:"@kency17",to:"Future Self",title:"A Note to My Future Self",msg:"Keep going. The grind you're putting in on Ritual testnet — someone's watching. Stay consistent.",date:"2025-06-01",status:"sealed",type:"Future self",unlock:"Jun 1, 2025"},
+  {id:4,from:"@dotmantissa",to:"Ritual Community",title:"For Every New Builder",msg:"I wanted one thing: that someone would use it to write their first smart contract. Welcome.",date:"2024-11-30",status:"opened",type:"Promise",unlock:"Nov 30, 2024"},
+  {id:5,from:"@YoungestGrandad",to:"@maharshi_17904",title:"A Dedication to a Real Builder",msg:"You shipped before anyone was watching. That's the mark of a true builder.",date:"2025-09-01",status:"sealed",type:"Dedication",unlock:"Sep 1, 2025"},
+  {id:6,from:"@tutufly_yy",to:"Ritual Community",title:"When Siggy Surfers Hits 1000 Players",msg:"Remember the small beginnings. This community is everything.",date:"2025-07-15",status:"sealed",type:"Message",unlock:"Jul 15, 2025"},
 ];
-const FEED_DATA = [
-  {type:"drop",b:BLDRS[0],action:"sealed a Legacy Drop",detail:"To the Ritual Community — When Mainnet Launches",badge:"b-drop",time:"2h ago"},
-  {type:"vouch",b:BLDRS[3],action:"vouched for",target:"@kency17",detail:'"Consistent, reliable, shows up every day. Real builder energy."',badge:"b-vouch",time:"5h ago"},
-  {type:"drop",b:BLDRS[1],action:"opened a Legacy Drop",detail:"Revealed: To the GM Striker — a dedication to consistency",badge:"b-drop",time:"1d ago"},
-  {type:"join",b:BLDRS[5],action:"joined Ritual Network",detail:"Linked wallet · Connected @tutufly_yy · 1 app shipped",badge:"b-join",time:"2d ago"},
-  {type:"vouch",b:BLDRS[2],action:"vouched for",target:"@dotmantissa",detail:'"Ships real educational content. Made Web3 more accessible for me."',badge:"b-vouch",time:"3d ago"},
+const FEED_DATA=[
+  {type:"drop",b:BLDRS[0],action:"sealed a Legacy Drop",detail:"To the Ritual Community — When Mainnet Launches",badge:"bd",time:"2h ago"},
+  {type:"vouch",b:BLDRS[3],action:"vouched for",target:"@kency17",detail:'"Consistent, reliable, shows up every day. Real builder energy."',badge:"bv",time:"5h ago"},
+  {type:"drop",b:BLDRS[1],action:"opened a Legacy Drop",detail:"Revealed: To the GM Striker",badge:"bd",time:"1d ago"},
+  {type:"join",b:BLDRS[5],action:"joined Ritual Network",detail:"Linked wallet · @tutufly_yy · 1 app shipped",badge:"bj",time:"2d ago"},
+  {type:"vouch",b:BLDRS[2],action:"vouched for",target:"@dotmantissa",detail:'"Ships real educational content."',badge:"bv",time:"3d ago"},
 ];
 
-let allDrops = [...DROPS_DATA];
-let allBldrs = [...BLDRS];
-let dropFilter = 'all';
-let curUser = null;
-let walletAddr = null;
-let isConnected = false;
+// ─── MOCK X USER DATABASE ────────────────────────────
+// In production this would be a Twitter/X API call.
+// For demo we simulate known Ritual community accounts.
+const X_USERS = {
+  'youngestgrandad': {name:'Marvell D. Gregory',handle:'@YoungestGrandad',bio:'Head of Sales @SalesTarget_ai · Web3 Builder · Youngest Grandad',initials:'MG',color:'#00c6ff'},
+  'maharshi_17904': {name:'Maharshi Eth',handle:'@maharshi_17904',bio:'DeFi Dev · Ritual Testnet Builder · Shipped Ritual Testnet Card',initials:'ME',color:'#00e5c8'},
+  'kency17': {name:'Kency',handle:'@kency17',bio:'GM Strike creator · 24hr consistency protocol · Builder',initials:'KC',color:'#e8c96a'},
+  'dotmantissa': {name:'Dot Mantissa',handle:'@dotmantissa',bio:'Built Ritual Learn · Educator & Developer · Web3 accessibility advocate',initials:'DM',color:'#ff6b9d'},
+  'tutufly_yy': {name:'Tutufly',handle:'@tutufly_yy',bio:'Siggy Surfers builder · UX-obsessed · Surfing the Ritual wave',initials:'TF',color:'#fb923c'},
+  'thomas': {name:'Thomas',handle:'@Thomas',bio:'Siggy Streaks — streak culture in Web3',initials:'TH',color:'#a78bfa'},
+  'aliorbz': {name:'Ali Orbz',handle:'@aliorbz',bio:'Siggy Run builder · Runner · Ritual community member',initials:'AO',color:'#4ade80'},
+  'ritualbuilder': {name:'Ritual Builder',handle:'@ritualbuilder',bio:'Building on Ritual Testnet · Community contributor',initials:'RB',color:'#4f7fff'},
+  'herbcase': {name:'Herbcase',handle:'@herbcase',bio:'Ritual Mission Console creator · Builder',initials:'HC',color:'#f472b6'},
+};
 
-// ─── WALLET CONNECT (Real MetaMask / ethers.js) ──────────
+let allDrops=[...DROPS_DATA];
+let allBldrs=[...BLDRS];
+let dropFilter='all';
+let curUser=null;
+let walletAddr=null;
+let isConnected=false;
+
+// State for share banners
+let lastAction = {type:null, data:{}};
+let fetchedUsers = {drop:null, vouch:null, gift:null};
+
+// ─── X FETCH ────────────────────────────────────────
+function fetchX(context) {
+  const inputEl = document.getElementById(context + 'XInput');
+  const profileEl = document.getElementById(context + 'XProfile');
+  const notFoundEl = document.getElementById(context + 'XNotFound');
+  const raw = inputEl.value.trim().replace('@','').toLowerCase();
+  
+  if (!raw) { toast('⚠️ Enter an X handle first.'); return; }
+  
+  // Reset state
+  profileEl.classList.remove('show');
+  notFoundEl.classList.remove('show');
+  
+  // Simulate API delay
+  inputEl.style.borderColor = 'rgba(0,198,255,0.5)';
+  toast('🔍 Fetching @' + raw + '...');
+  
+  setTimeout(() => {
+    inputEl.style.borderColor = '';
+    const user = X_USERS[raw];
+    if (user) {
+      document.getElementById(context + 'XPfp').textContent = user.initials;
+      document.getElementById(context + 'XPfp').style.background = 'linear-gradient(135deg,' + user.color + ',' + user.color + '88)';
+      document.getElementById(context + 'XName').textContent = user.name;
+      document.getElementById(context + 'XHandle').textContent = user.handle;
+      document.getElementById(context + 'XBio').textContent = user.bio;
+      profileEl.classList.add('show');
+      fetchedUsers[context] = user;
+      // Auto-fill recipient field if applicable
+      if (context === 'drop' && document.getElementById('dTo')) {
+        document.getElementById('dTo').value = user.handle;
+      }
+      toast('✅ Found: ' + user.name);
+    } else {
+      notFoundEl.classList.add('show');
+      fetchedUsers[context] = null;
+      toast('❌ @' + raw + ' not found on Ritual Network.');
+    }
+  }, 800);
+}
+
+// ─── WALLET CONNECT ─────────────────────────────────
 async function connectMM() {
   if (typeof window.ethereum === 'undefined') {
-    toast('⚠️ MetaMask not found. Please install MetaMask extension first.');
-    window.open('https://metamask.io/download/', '_blank');
-    return;
+    toast('⚠️ MetaMask not found. Install it first.'); 
+    window.open('https://metamask.io/download/','_blank'); return;
   }
   try {
     toast('⏳ Connecting to MetaMask...');
     const provider = new ethers.BrowserProvider(window.ethereum);
-    const accounts = await provider.send('eth_requestAccounts', []);
-    if (!accounts || accounts.length === 0) { toast('⚠️ No accounts found.'); return; }
+    const accounts = await provider.send('eth_requestAccounts',[]);
+    if (!accounts||!accounts.length) { toast('⚠️ No accounts found.'); return; }
     walletAddr = accounts[0];
     await switchToRitual();
-    finishConnect(walletAddr, 'MetaMask');
+    finishConnect(walletAddr,'MetaMask');
   } catch(e) {
-    if (e.code === 4001) toast('⚠️ Connection rejected by user.');
-    else toast('⚠️ Connection failed: ' + (e.message || 'Unknown error'));
+    if (e.code===4001) toast('⚠️ Rejected by user.'); 
+    else toast('⚠️ Connection failed: '+(e.message||'Unknown error'));
   }
 }
-
 async function switchToRitual() {
-  try {
-    await window.ethereum.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: RITUAL_CHAIN_ID }] });
-  } catch(e) {
-    if (e.code === 4902) {
-      try {
-        await window.ethereum.request({ method: 'wallet_addEthereumChain', params: [RITUAL_CHAIN] });
-        toast('✅ Ritual Testnet added to MetaMask!');
-      } catch(e2) {
-        toast('⚠️ Could not add Ritual Testnet automatically. Please add it manually.');
-      }
-    }
-  }
+  try { await window.ethereum.request({method:'wallet_switchEthereumChain',params:[{chainId:RIT_CHAIN_ID}]}); }
+  catch(e) { if(e.code===4902) { try { await window.ethereum.request({method:'wallet_addEthereumChain',params:[RIT_CHAIN]}); toast('✅ Ritual Testnet added!'); } catch(e2){} } }
 }
-
-async function connectWC() {
-  toast('ℹ️ WalletConnect integration requires backend setup. Use MetaMask for now.');
-}
-async function connectCB() {
-  toast('ℹ️ Coinbase Wallet: use MetaMask option or add Ritual Testnet manually.');
-}
-
 function manualConn() {
-  const w = document.getElementById('mWallet').value;
-  const x = document.getElementById('mX').value || '@builder';
-  const addr = w || '0x' + Math.random().toString(16).substr(2,8) + '...' + Math.random().toString(16).substr(2,4);
-  finishConnect(addr, 'Manual');
+  const w=document.getElementById('mWallet').value;
+  const x=document.getElementById('mX').value||'@builder';
+  const addr=w||'0x'+Math.random().toString(16).substr(2,8)+'...'+Math.random().toString(16).substr(2,4);
+  finishConnect(addr,'Guest');
 }
-
-function finishConnect(addr, method) {
-  walletAddr = addr;
-  isConnected = true;
-  const shortAddr = addr.length > 16 ? addr.substring(0,10)+'...'+addr.slice(-4) : addr;
-  const btn = document.getElementById('walletBtn');
-  btn.textContent = shortAddr;
-  btn.className = 'wallet-btn connected';
+function finishConnect(addr,method) {
+  walletAddr=addr; isConnected=true;
+  const short=addr.length>16?addr.substring(0,10)+'...'+addr.slice(-4):addr;
+  const btn=document.getElementById('walletBtn');
+  btn.textContent=short; btn.className='wbtn connected';
   document.getElementById('netBadge').classList.add('show');
-  const xVal = document.getElementById('mX') ? document.getElementById('mX').value || '@YoungestGrandad' : '@YoungestGrandad';
-  curUser = {...BLDRS[0], wallet: shortAddr, handle: xVal.startsWith('@') ? xVal : '@'+xVal};
-  closeOverlay('walletOverlay');
-  toast('✅ Connected via ' + method + '! Welcome to Ritual Network.');
-  if (document.getElementById('page-profile').classList.contains('active')) renderProfile();
-  if (document.getElementById('walletWarning')) document.getElementById('walletWarning').style.display = 'none';
-  if (document.getElementById('giftWalletWarn')) document.getElementById('giftWalletWarn').style.display = 'none';
+  const xv=document.getElementById('mX')?document.getElementById('mX').value||'@YoungestGrandad':'@YoungestGrandad';
+  curUser={...BLDRS[0],wallet:short,handle:xv.startsWith('@')?xv:'@'+xv};
+  closeO('walletOverlay');
+  toast('✅ Connected via '+method+'! Welcome to Ritual Network.');
   if (window.ethereum) {
-    window.ethereum.on('accountsChanged', (accs) => {
-      if (accs.length === 0) disconnectWallet();
-      else { walletAddr = accs[0]; finishConnect(accs[0], 'MetaMask'); }
-    });
-    window.ethereum.on('chainChanged', () => window.location.reload());
+    window.ethereum.on('accountsChanged',(a)=>{ if(!a.length) { walletAddr=null;isConnected=false;curUser=null;document.getElementById('walletBtn').textContent='Connect Wallet';document.getElementById('walletBtn').className='wbtn';document.getElementById('netBadge').classList.remove('show');} else finishConnect(a[0],'MetaMask'); });
+    window.ethereum.on('chainChanged',()=>window.location.reload());
   }
 }
 
-function disconnectWallet() {
-  walletAddr = null; isConnected = false; curUser = null;
-  const btn = document.getElementById('walletBtn');
-  btn.textContent = 'Connect Wallet';
-  btn.className = 'wallet-btn';
-  document.getElementById('netBadge').classList.remove('show');
-}
-
-// ─── SEND GIFT ──────────────────────────────────────────
+// ─── SEND GIFT ───────────────────────────────────────
 async function sendGift() {
-  const to = document.getElementById('giftTo').value;
+  const toUser = fetchedUsers['gift'];
   const amt = document.getElementById('giftAmt').value;
-  if (!to || !amt) { toast('⚠️ Fill in recipient and amount.'); return; }
-  if (!isConnected) {
-    document.getElementById('giftWalletWarn').style.display = 'block';
-    toast('⚠️ Connect your wallet to Ritual Testnet first.');
-    return;
-  }
-  const btn = document.getElementById('giftBtn');
-  btn.disabled = true;
-  btn.textContent = '⏳ Sending...';
+  const msg = document.getElementById('giftMsg').value;
+  const occasion = document.getElementById('giftOccasion').value;
+  if (!toUser && !document.getElementById('giftXInput').value) { toast('⚠️ Fetch a recipient X account first.'); return; }
+  if (!amt) { toast('⚠️ Enter an amount.'); return; }
+  if (!isConnected) { document.getElementById('giftWalletWarn').style.display='block'; toast('⚠️ Connect wallet first.'); return; }
+  const btn=document.getElementById('giftBtn');
+  btn.disabled=true; btn.textContent='⏳ Sending...';
   try {
-    // Record gift as a small ETH transaction on Ritual testnet (0 ETH tx with data)
-    const provider = new ethers.BrowserProvider(window.ethereum);
-    const signer = await provider.getSigner();
-    const msg = document.getElementById('giftMsg').value || 'Ritual Network Token Gift';
-    const data = ethers.hexlify(ethers.toUtf8Bytes('RITUAL_GIFT:' + to + ':' + amt + ':' + msg));
-    const tx = await signer.sendTransaction({
-      to: walletAddr, // self-send with data (testnet record)
-      value: 0n,
-      data: data,
-      gasLimit: 50000n
-    });
-    toast('🎁 Gift recorded on Ritual Testnet! TX: ' + tx.hash.substring(0,16) + '...');
-    btn.textContent = '✅ Gift Sent!';
-    setTimeout(() => { btn.disabled = false; btn.textContent = '🎁 Send Token Gift'; }, 4000);
+    const provider=new ethers.BrowserProvider(window.ethereum);
+    const signer=await provider.getSigner();
+    const data=ethers.hexlify(ethers.toUtf8Bytes('RITUAL_GIFT:'+(toUser?toUser.handle:'?')+':'+amt+':'+msg));
+    const tx=await signer.sendTransaction({to:walletAddr,value:0n,data:data,gasLimit:50000n});
+    const recipientHandle = toUser ? toUser.handle : document.getElementById('giftXInput').value;
+    lastAction = {type:'gift', data:{toUser, amt, msg, occasion, txHash: tx.hash, recipientHandle}};
+    document.getElementById('giftShareSub').textContent = '🎁 Sent ' + amt + ' RITUAL to ' + recipientHandle + ' · TX: ' + tx.hash.substring(0,14) + '...';
+    document.getElementById('giftShareResult').classList.add('show');
+    btn.textContent='✅ Gift Sent!';
+    setTimeout(()=>{btn.disabled=false;btn.textContent='🎁 Send Token Gift';},4000);
+    toast('🎁 Gift recorded on Ritual Testnet!');
   } catch(e) {
-    btn.disabled = false;
-    btn.textContent = '🎁 Send Token Gift';
-    if (e.code === 4001) toast('⚠️ Transaction rejected.');
-    else toast('ℹ️ Gift recorded locally. Connect to Ritual Testnet for onchain record.');
+    btn.disabled=false; btn.textContent='🎁 Send Token Gift';
+    const recipientHandle = toUser ? toUser.handle : document.getElementById('giftXInput').value || '?';
+    lastAction = {type:'gift', data:{toUser, amt, msg, occasion, txHash: null, recipientHandle}};
+    document.getElementById('giftShareSub').textContent = '🎁 Gift of ' + amt + ' RITUAL queued for ' + recipientHandle + ' · Connect to Ritual Testnet for onchain record.';
+    document.getElementById('giftShareResult').classList.add('show');
+    if(e.code===4001) toast('⚠️ Transaction rejected.'); 
+    else toast('ℹ️ Gift recorded locally. Connect Ritual Testnet for onchain.');
   }
 }
 
-// ─── PAGE ROUTING ──────────────────────────────────────
-function go(id, navEl) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.getElementById('page-'+id).classList.add('active');
-  document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));
-  if (navEl) navEl.classList.add('active');
-  if (id==='home') renderHome();
-  if (id==='drops') renderDrops();
-  if (id==='builders') renderBldrs();
-  if (id==='leaderboard') renderLB();
-  if (id==='profile') renderProfile();
-  if (id==='seal') {
-    const ww = document.getElementById('walletWarning');
-    const gw = document.getElementById('giftWalletWarn');
-    if (ww) ww.style.display = isConnected ? 'none' : 'block';
-    if (gw) gw.style.display = 'none';
+// ─── SEAL DROP ───────────────────────────────────────
+function sealDrop() {
+  const title=document.getElementById('dTitle').value;
+  const msg=document.getElementById('dMsg').value;
+  const date=document.getElementById('dDate').value;
+  const to=document.getElementById('dTo').value;
+  if (!title||!msg) { toast('⚠️ Fill in the title and message.'); return; }
+  const toUser = fetchedUsers['drop'];
+  const nd={id:allDrops.length+1,from:curUser?curUser.handle:'@YoungestGrandad',to:to||'Ritual Community',title,msg,date:date||'2025-12-31',status:'sealed',type:'Message',unlock:date?new Date(date).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}):'TBD'};
+  allDrops.unshift(nd);
+  lastAction={type:'drop',data:{title,msg,to:to||'Ritual Community',date:nd.unlock,toUser}};
+  document.getElementById('dropShareSub').textContent = '🔒 "' + title + '" sealed · Reveals ' + nd.unlock + (toUser?' · Tagged: '+toUser.handle:'');
+  document.getElementById('dropShareResult').classList.add('show');
+  toast('🔒 Drop sealed! It reveals on ' + nd.unlock);
+  document.getElementById('dTitle').value=''; document.getElementById('dMsg').value=''; document.getElementById('dTo').value='';
+}
+
+// ─── VOUCH ───────────────────────────────────────────
+function doVouch() {
+  const note=document.getElementById('vNote').value;
+  const toUser=fetchedUsers['vouch'];
+  const handleRaw=document.getElementById('vouchXInput').value;
+  if (!handleRaw&&!toUser) { toast('⚠️ Fetch a builder X account first.'); return; }
+  if (!note) { toast('⚠️ Write your endorsement.'); return; }
+  const handle=toUser?toUser.handle:handleRaw;
+  const roleEl=document.querySelector('#vg3 .ro.on');
+  const role=roleEl?roleEl.textContent.trim():'Builder';
+  lastAction={type:'vouch',data:{note,handle,role,toUser}};
+  closeO('vouchOverlay');
+  document.getElementById('vouchShareSub').textContent = '✅ Vouched for ' + handle + ' as ' + role + ' · Permanent on Ritual Network';
+  document.getElementById('vouchShareResult').classList.add('show');
+  const b=allBldrs.find(x=>x.handle===handle||x.handle==='@'+handle.replace('@',''));
+  if(b)b.vouches++;
+  toast('✅ Vouched for '+handle+'! Signed & permanent.');
+  document.getElementById('vNote').value='';
+}
+function quickVouch() {
+  const h=document.getElementById('qvHandle').value;
+  const n=document.getElementById('qvNote').value;
+  if(!h){toast('⚠️ Enter handle.');return;}
+  closeO('vouchOverlay');
+  toast('✅ Vouched for '+h+'! Permanent on Ritual Network.');
+  const b=allBldrs.find(x=>x.handle===h||x.handle==='@'+h.replace('@',''));
+  if(b)b.vouches++;
+}
+
+// ─── SHARE TO X ──────────────────────────────────────
+function buildXText(type) {
+  const d = lastAction.data;
+  const tag = d.toUser ? ' ' + d.toUser.handle : '';
+  const myTag = curUser ? ' ' + curUser.handle : '';
+  if (type==='drop') {
+    return `🔒 Just sealed a Legacy Drop on Ritual Network${tag}\n\n"${d.title}"\n${d.msg ? d.msg.substring(0,120)+(d.msg.length>120?'...':'') : ''}\n\nReveals: ${d.date||'TBD'}\n\n#Ritual #BuildersOfRitual #RitualNetwork\nhttps://ritual-network-bice.vercel.app`;
   }
+  if (type==='vouch') {
+    return `✅ Just vouched for ${d.handle} on Ritual Network!\n\n"${d.note}"\n\nEndorsed as: ${d.role}\n\nOnchain reputation. Permanent. Real.\n\n#Ritual #BuildersOfRitual #RitualNetwork\nhttps://ritual-network-bice.vercel.app`;
+  }
+  if (type==='gift') {
+    return `🎁 Just sent a token gift on Ritual Network${d.recipientHandle?' to '+d.recipientHandle:''}\n\n${d.occasion} · ${d.amt} RITUAL\n\n"${d.msg||'Recognition for great work'}"\n\n#Ritual #BuildersOfRitual #RitualNetwork\nhttps://ritual-network-bice.vercel.app`;
+  }
+  return '';
+}
+function shareToX(type) {
+  const txt = buildXText(type);
+  window.open('https://twitter.com/intent/tweet?text='+encodeURIComponent(txt),'_blank');
+}
+function shareFromBanner() {
+  shareToX(lastAction.type);
+}
+function copyShareText(type) {
+  const txt = buildXText(type);
+  navigator.clipboard.writeText(txt).then(()=>toast('📋 Share text copied!')).catch(()=>toast('📋 Text ready to copy.'));
+}
+
+// ─── BANNER CANVAS ───────────────────────────────────
+function showBanner(type) {
+  document.getElementById('bannerOverlay').classList.add('show');
+  drawBanner(type);
+}
+function closeBanner() {
+  document.getElementById('bannerOverlay').classList.remove('show');
+}
+function downloadBanner() {
+  const canvas = document.getElementById('shareCanvas');
+  const a = document.createElement('a');
+  a.download = 'ritual-network-share.png';
+  a.href = canvas.toDataURL('image/png');
+  a.click();
+  toast('⬇ Banner downloaded!');
+}
+
+function drawBanner(type) {
+  const canvas = document.getElementById('shareCanvas');
+  const ctx = canvas.getContext('2d');
+  const W = 560, H = 300;
+  canvas.width = W; canvas.height = H;
+  const d = lastAction.data;
+
+  // ── BACKGROUND ──
+  const bgGrad = ctx.createLinearGradient(0,0,W,H);
+  bgGrad.addColorStop(0,'#020b14');
+  bgGrad.addColorStop(0.5,'#041a2e');
+  bgGrad.addColorStop(1,'#020b14');
+  ctx.fillStyle = bgGrad;
+  ctx.fillRect(0,0,W,H);
+
+  // Grid lines
+  ctx.strokeStyle = 'rgba(0,198,255,0.06)';
+  ctx.lineWidth = 1;
+  for(let x=0;x<W;x+=40){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+  for(let y=0;y<H;y+=40){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+
+  // Glow orbs
+  const g1 = ctx.createRadialGradient(W*0.2,H*0.3,0,W*0.2,H*0.3,160);
+  g1.addColorStop(0,'rgba(0,198,255,0.12)');g1.addColorStop(1,'transparent');
+  ctx.fillStyle=g1;ctx.fillRect(0,0,W,H);
+  const g2 = ctx.createRadialGradient(W*0.8,H*0.7,0,W*0.8,H*0.7,120);
+  g2.addColorStop(0,'rgba(0,229,200,0.1)');g2.addColorStop(1,'transparent');
+  ctx.fillStyle=g2;ctx.fillRect(0,0,W,H);
+
+  // ── TYPE-SPECIFIC ACCENT LINE ──
+  const accentColors = {drop:'#e8c96a', vouch:'#00c6ff', gift:'#00e5c8'};
+  const accentColor = accentColors[type]||'#00c6ff';
+  const accentGrad = ctx.createLinearGradient(0,0,W,0);
+  accentGrad.addColorStop(0,accentColor);
+  accentGrad.addColorStop(0.5,type==='drop'?'#c9a84c':type==='vouch'?'#00e5c8':'#e8c96a');
+  accentGrad.addColorStop(1,'transparent');
+  ctx.fillStyle=accentGrad;
+  ctx.fillRect(0,0,W,3);
+
+  // ── LOGO (top left) ──
+  ctx.beginPath();
+  ctx.arc(28,22,8,0,Math.PI*2);
+  ctx.strokeStyle='rgba(0,198,255,0.8)';ctx.lineWidth=1.5;ctx.stroke();
+  ctx.beginPath();ctx.arc(28,22,3,0,Math.PI*2);
+  ctx.fillStyle='#00c6ff';ctx.fill();
+  ctx.font='bold 11px Syne, sans-serif';
+  ctx.fillStyle='rgba(255,255,255,0.7)';
+  ctx.fillText('RITUAL NETWORK',43,26);
+
+  // ── TYPE BADGE (top right) ──
+  const labels={drop:'🔒 LEGACY DROP',vouch:'✅ VOUCH',gift:'🎁 TOKEN GIFT'};
+  const labelBg={drop:'rgba(232,201,106,0.15)',vouch:'rgba(0,198,255,0.12)',gift:'rgba(0,229,200,0.12)'};
+  const labelBdr={drop:'rgba(232,201,106,0.4)',vouch:'rgba(0,198,255,0.4)',gift:'rgba(0,229,200,0.4)'};
+  ctx.font='bold 10px DM Sans, sans-serif';
+  const labelW=ctx.measureText(labels[type]).width+20;
+  roundRect(ctx,W-labelW-16,10,labelW,22,6);
+  ctx.fillStyle=labelBg[type];ctx.fill();
+  ctx.strokeStyle=labelBdr[type];ctx.lineWidth=1;ctx.stroke();
+  ctx.fillStyle=accentColor;ctx.font='bold 10px DM Sans,sans-serif';
+  ctx.fillText(labels[type],W-labelW-6,25);
+
+  // ── USER AVATARS ──
+  const user1 = curUser || {initials:'ME',color:'#00c6ff',name:'You',handle:'@you'};
+  const user2 = d.toUser;
+
+  drawAvatar(ctx, 44, 100, user1.color||'#00c6ff', user1.initials||'?', 36);
+  // User 1 name
+  ctx.font = 'bold 13px Syne,sans-serif';
+  ctx.fillStyle = '#d4eaf7';
+  ctx.fillText(user1.name||user1.handle||'You', 90, 94);
+  ctx.font = '11px DM Sans,sans-serif';
+  ctx.fillStyle = 'rgba(111,163,196,0.9)';
+  ctx.fillText(user1.handle||'', 90, 112);
+
+  if (user2) {
+    // Arrow connector
+    const arrowX = W/2;
+    ctx.font='bold 18px sans-serif';
+    ctx.fillStyle=accentColor;
+    ctx.textAlign='center';
+    ctx.fillText('→',arrowX,106);
+    ctx.textAlign='left';
+    // User 2
+    drawAvatar(ctx, W-88, 100, user2.color||'#e8c96a', user2.initials||'?', 36);
+    ctx.font='bold 13px Syne,sans-serif';
+    ctx.fillStyle='#d4eaf7';
+    ctx.fillText(user2.name, W-42, 94);
+    ctx.font='11px DM Sans,sans-serif';
+    ctx.fillStyle='rgba(111,163,196,0.9)';
+    ctx.fillText(user2.handle, W-42, 112);
+  }
+
+  // ── DIVIDER ──
+  ctx.beginPath();ctx.moveTo(30,142);ctx.lineTo(W-30,142);
+  ctx.strokeStyle='rgba(0,198,255,0.12)';ctx.lineWidth=1;ctx.stroke();
+
+  // ── ACTION CONTENT ──
+  if (type==='drop') {
+    ctx.font='bold 16px Syne,sans-serif';
+    ctx.fillStyle='#e8c96a';
+    wrapText(ctx,'"'+(d.title||'Legacy Drop')+'"',30,170,W-60,20);
+    ctx.font='13px DM Sans,sans-serif';
+    ctx.fillStyle='rgba(111,163,196,0.85)';
+    const preview=(d.msg||'').substring(0,100)+(d.msg&&d.msg.length>100?'...':'');
+    wrapText(ctx,preview,30,196,W-60,17);
+    ctx.font='11px DM Sans,sans-serif';
+    ctx.fillStyle='rgba(0,198,255,0.7)';
+    ctx.fillText('Reveals: '+(d.date||'TBD'),30,256);
+  } else if (type==='vouch') {
+    ctx.font='bold 14px Syne,sans-serif';
+    ctx.fillStyle='#00c6ff';
+    ctx.fillText('Endorsed as: '+(d.role||'Builder'),30,172);
+    ctx.font='italic 13px DM Sans,sans-serif';
+    ctx.fillStyle='rgba(212,234,247,0.9)';
+    wrapText(ctx,'"'+(d.note||'')+'"',30,198,W-60,17);
+    ctx.font='11px DM Sans,sans-serif';
+    ctx.fillStyle='rgba(0,229,200,0.7)';
+    ctx.fillText('Wallet-signed · Permanent · Onchain reputation',30,256);
+  } else {
+    ctx.font='bold 15px Syne,sans-serif';
+    ctx.fi
+    ctx.fillStyle='#00e5c8';
+    ctx.fillText((d.amt||'?')+' RITUAL sent  ·  '+(d.occasion||'Recognition'),30,172);
+    ctx.font='13px DM Sans,sans-serif';
+    ctx.fillStyle='rgba(212,234,247,0.85)';
+    wrapText(ctx,'"'+(d.msg||'Recognition for great work')+'"',30,198,W-60,17);
+    ctx.font='11px DM Sans,sans-serif';
+    ctx.fillStyle='rgba(0,198,255,0.7)';
+    ctx.fillText('Recorded on Ritual Testnet',30,256);
+  }
+
+  // BOTTOM BAR
+  const bbGrad=ctx.createLinearGradient(0,0,W,0);
+  bbGrad.addColorStop(0,'rgba(0,198,255,0.08)');bbGrad.addColorStop(1,'rgba(0,229,200,0.05)');
+  ctx.fillStyle=bbGrad;ctx.fillRect(0,272,W,28);
+  ctx.strokeStyle='rgba(0,198,255,0.15)';ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(0,272);ctx.lineTo(W,272);ctx.stroke();
+  ctx.font='10px DM Sans,sans-serif';ctx.fillStyle='rgba(45,95,122,0.9)';
+  ctx.fillText('ritual-network-bice.vercel.app',30,290);
+  ctx.textAlign='right';
+  ctx.fillStyle='rgba(0,198,255,0.5)';
+  ctx.fillText(new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}),W-30,290);
+  ctx.textAlign='left';
+}
+
+function drawAvatar(ctx,cx,cy,color,initials,r){
+  const g=ctx.createRadialGradient(cx,cy,0,cx,cy,r);
+  g.addColorStop(0,color+'44');g.addColorStop(1,color+'18');
+  ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);
+  ctx.fillStyle=g;ctx.fill();
+  ctx.strokeStyle=color+'88';ctx.lineWidth=1.5;ctx.stroke();
+  ctx.font='bold 14px Syne,sans-serif';
+  ctx.fillStyle=color;
+  ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillText(initials,cx,cy);
+  ctx.textAlign='left';ctx.textBaseline='alphabetic';
+}
+
+function wrapText(ctx,text,x,y,maxW,lineH){
+  const words=text.split(' ');let line='';let yy=y;
+  for(let i=0;i<words.length;i++){
+    const test=line+words[i]+' ';
+    if(ctx.measureText(test).width>maxW&&i>0){ctx.fillText(line,x,yy);line=words[i]+' ';yy+=lineH;if(yy>265)break;}
+    else line=test;
+  }
+  ctx.fillText(line,x,yy);
+}
+
+function roundRect(ctx,x,y,w,h,r){
+  ctx.beginPath();ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);
+  ctx.quadraticCurveTo(x+w,y,x+w,y+r);ctx.lineTo(x+w,y+h-r);
+  ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);ctx.lineTo(x+r,y+h);
+  ctx.quadraticCurveTo(x,y+h,x,y+h-r);ctx.lineTo(x,y+r);
+  ctx.quadraticCurveTo(x,y,x+r,y);ctx.closePath();
+}
+
+// PAGE ROUTING
+function go(id,navEl){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  document.querySelectorAll('.nav-link').forEach(n=>n.classList.remove('active'));
+  if(navEl)navEl.classList.add('active');
+  if(id==='home')renderHome();
+  if(id==='drops')renderDrops();
+  if(id==='builders')renderBldrs();
+  if(id==='leaderboard')renderLB();
+  if(id==='profile')renderProfile();
   window.scrollTo(0,0);
 }
 
-// ─── RENDER HOME ───────────────────────────────────────
-function renderHome() {
-  animStats();
-  const f = document.getElementById('homeFeed');
-  if (!f) return;
-  f.innerHTML = FEED_DATA.map(fd => {
-    const b = fd.b;
-    const av = `<div class="ava" style="background:${b.color}18;color:${b.color}">${b.initials}</div>`;
-    let body = '';
-    if (fd.type === 'drop') {
-      const opened = fd.action.includes('opened');
-      body = `<div class="sealed-row"><div style="font-size:1.3rem">${opened?'🎉':'🔒'}</div><div class="seal-txt"><div class="seal-title">${fd.detail}</div><div class="seal-sub">${opened?'Now public — share to X':'Sealed · reveals at future date'}</div></div>${!opened?'<div class="seal-chip">SEALED</div>':''}</div>`;
-    } else {
-      body = `<div class="feed-body">${b.handle} <strong>${fd.action}</strong> ${fd.target||''}<br><span style="font-style:italic;color:var(--text3)">${fd.detail}</span></div>`;
-    }
-    return `<div class="feed-card"><div class="feed-top">${av}<div class="feed-who"><div class="feed-name">${b.name} <span style="color:var(--text3);font-weight:400">${b.handle}</span></div><div class="feed-when">${fd.time}</div></div><div class="badge ${fd.badge}">${fd.badge.includes('drop')?'Legacy Drop':fd.badge.includes('vouch')?'Vouch':'Joined'}</div></div>${body}<div class="feed-acts"><button class="feed-act" onclick="toast('❤️ Hearted!')">❤ Heart</button><button class="feed-act" onclick="shareX()">🐦 Share to X</button></div></div>`;
-  }).join('');
+function vTab(i){
+  ['tab0','tab1','tab2'].forEach((id,j)=>document.getElementById(id).classList.toggle('active',j===i));
+  [0,1,2].forEach(j=>{const t=document.getElementById('vt'+j);if(t)t.style.display=j===i?'block':'none';});
+  if(i===2&&!isConnected)document.getElementById('giftWalletWarn').style.display='block';
 }
-
-function animStats() {
-  const targets = [allBldrs.length, allDrops.length, allBldrs.reduce((s,b)=>s+b.vouches,0), allBldrs.reduce((s,b)=>s+b.apps,0)];
-  ['s1','s2','s3','s4'].forEach((id,i) => {
-    let c = 0; const el = document.getElementById(id); if (!el) return;
-    const step = Math.ceil(targets[i]/40);
-    const t = setInterval(() => { c = Math.min(c+step, targets[i]); el.textContent = c; if (c >= targets[i]) clearInterval(t); }, 28);
-  });
-}
-
-// ─── RENDER DROPS ─────────────────────────────────────
-function renderDrops() {
-  const g = document.getElementById('dropsGrid'); if (!g) return;
-  const list = dropFilter === 'all' ? allDrops : allDrops.filter(d =>
-    dropFilter === 'sealed' ? d.status === 'sealed' :
-    dropFilter === 'opened' ? d.status === 'opened' : d.to === 'Ritual Community'
-  );
-  g.innerHTML = list.map(d => `
-    <div class="drop-card ${d.status==='opened'?'opened':''}">
-      <div class="drop-status ${d.status}">${d.status==='sealed'?'🔒 Sealed':'🎉 Revealed'}</div>
-      <div class="drop-title-txt">${d.title}</div>
-      <div class="drop-from">From ${d.from} → ${d.to}</div>
-      <div class="drop-msg">${d.status==='opened'?d.msg:d.msg.substring(0,65)+'...'}</div>
-      <div style="display:flex;gap:5px;margin-bottom:11px;flex-wrap:wrap">
-        <span class="chip2" style="background:rgba(0,198,255,0.07);color:var(--accent);border:1px solid rgba(0,198,255,0.18)">${d.type}</span>
-        ${d.to==='Ritual Community'?'<span class="chip2" style="background:rgba(0,229,200,0.07);color:var(--teal);border:1px solid rgba(0,229,200,0.18)">🌐 Community</span>':''}
-      </div>
-      <div class="drop-foot">
-        <div class="drop-date">${d.status==='sealed'?'Unlocks '+d.unlock:'Opened '+d.unlock}</div>
-        <button class="xbtn" onclick="shareX()">Share to X</button>
-      </div>
-    </div>`).join('');
-}
-
-function filterDrops(f, el) {
-  dropFilter = f;
-  document.querySelectorAll('#dropFilters .ro').forEach(b => b.classList.remove('on'));
-  el.classList.add('on');
-  renderDrops();
-}
-
-// ─── RENDER BUILDERS ──────────────────────────────────
-function renderBldrs(list) {
-  const g = document.getElementById('bldGrid'); if (!g) return;
-  const src = list || allBldrs;
-  g.innerHTML = src.map(b => `
-    <div class="bld-card" onclick="viewBld(${b.id})">
-      <div class="bld-top">
-        <div class="bld-ava" style="background:${b.color}18;color:${b.color}">${b.initials}${b.active?'<div class="dot"></div>':''}</div>
-        <div><div class="bld-nm">${b.name}</div><div class="bld-hd">${b.handle} · ${b.wallet}</div></div>
-      </div>
-      <div class="bld-bio">${b.bio}</div>
-      <div class="tags">${b.tags.map(t=>`<span class="tag">${t}</span>`).join('')}</div>
-      <div class="bld-stats">
-        <div class="bs"><div class="bs-n">${b.vouches}</div><div class="bs-l">Vouches</div></div>
-        <div class="bs"><div class="bs-n">${b.drops}</div><div class="bs-l">Drops</div></div>
-        <div class="bs"><div class="bs-n">${b.apps}</div><div class="bs-l">Apps</div></div>
-      </div>
-      <button class="vouch-b" onclick="event.stopPropagation();openVouch('${b.handle}')">✅ Vouch for ${b.name.split(' ')[0]}</button>
-    </div>`).join('');
-}
-
-function searchBld(q) {
-  const lo = q.toLowerCase();
-  const filtered = q ? allBldrs.filter(b => b.name.toLowerCase().includes(lo)||b.handle.toLowerCase().includes(lo)||b.tags.some(t=>t.toLowerCase().includes(lo))) : allBldrs;
-  renderBldrs(filtered);
-}
-
-// ─── LEADERBOARD ──────────────────────────────────────
-function renderLB() {
-  const bv = [...allBldrs].sort((a,b)=>b.vouches-a.vouches);
-  const ba = [...allBldrs].sort((a,b)=>b.apps-a.apps);
-  const html = (arr, key) => arr.map((b,i) => `
-    <div class="lb-row">
-      <div class="lb-rk ${i===0?'rk-g':i===1?'rk-s':i===2?'rk-b':'rk-d'}">#${i+1}</div>
-      <div style="width:34px;height:34px;border-radius:50%;background:${b.color}18;color:${b.color};display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.72rem;flex-shrink:0">${b.initials}</div>
-      <div style="flex:1"><div class="lb-nm">${b.name}</div><div class="lb-hd" style="font-size:0.74rem;color:var(--text3)">${b.handle}</div></div>
-      <div class="lb-sc">${b[key]}</div>
-    </div>`).join('');
-  document.getElementById('lbV').innerHTML = html(bv,'vouches');
-  document.getElementById('lbA').innerHTML = html(ba,'apps');
-}
-
-// ─── PROFILE ──────────────────────────────────────────
-function renderProfile() {
-  const pc = document.getElementById('profContent'); if (!pc) return;
-  if (!curUser) {
-    pc.innerHTML = `<div class="empty"><div class="empty-icon">👤</div><div style="font-family:'Syne',sans-serif;font-size:1.05rem;font-weight:700;color:var(--text);margin-bottom:7px">Your Profile Lives Here</div><div style="color:var(--text2);font-size:0.87rem;margin-bottom:1.4rem;max-width:360px;margin-left:auto;margin-right:auto">Connect your wallet and link your X account to create your builder identity on Ritual Network.</div><button class="btn-glow" onclick="openWallet()">Connect & Create Profile</button></div>`;
-    return;
-  }
-  const b = curUser;
-  const rank = [...allBldrs].sort((a,c)=>c.vouches-a.vouches).findIndex(x=>x.id===b.id)+1;
-  pc.innerHTML = `
-    <div class="prof-header">
-      <div class="prof-ava" style="background:${b.color}18;color:${b.color}">${b.initials}</div>
-      <div style="flex:1">
-        <div class="prof-nm">${b.name}</div>
-        <div class="prof-hd">${b.handle} · ${b.wallet}</div>
-        <div class="prof-bio">${b.bio}</div>
-        <div class="tags">${b.tags.map(t=>`<span class="tag">${t}</span>`).join('')}</div>
-        <div class="prof-nums">
-          <div class="pn"><div class="pn-n">${b.vouches}</div><div class="pn-l">Vouches</div></div>
-          <div class="pn"><div class="pn-n">${b.drops}</div><div class="pn-l">Drops</div></div>
-          <div class="pn"><div class="pn-n">${b.apps}</div><div class="pn-l">Apps</div></div>
-          <div class="pn"><div class="pn-n">#${rank}</div><div class="pn-l">Rank</div></div>
-        </div>
-      </div>
-    </div>
-    <div class="tabs-strip"><button class="ts-item active">My Legacy Drops</button><button class="ts-item">Vouches Received</button><button class="ts-item">Apps Shipped</button></div>
-    <div class="drops-grid">
-      ${allDrops.filter(d=>d.from===b.handle).map(d=>`
-        <div class="drop-card ${d.status==='opened'?'opened':''}">
-          <div class="drop-status ${d.status}">${d.status==='sealed'?'🔒 Sealed':'🎉 Revealed'}</div>
-          <div class="drop-title-txt">${d.title}</div>
-          <div class="drop-from">To: ${d.to}</div>
-          <div class="drop-msg">${d.msg.substring(0,80)}...</div>
-          <div class="drop-foot"><div class="drop-date">${d.status==='sealed'?'Unlocks '+d.unlock:'Opened '+d.unlock}</div><button class="xbtn" onclick="shareX()">Share</button></div>
-        </div>`).join('') || '<div style="color:var(--text3);font-size:0.85rem">No drops yet — seal your first legacy drop!</div>'}
-    </div>`;
-}
-
-function viewBld(id) {
-  const b = allBldrs.find(x=>x.id===id); if (!b) return;
-  curUser = b;
-  go('profile', document.querySelectorAll('.nav-link')[4]);
-}
-
-// ─── SEAL DROP ────────────────────────────────────────
-function sealDrop() {
-  const title = document.getElementById('dTitle').value;
-  const msg = document.getElementById('dMsg').value;
-  const date = document.getElementById('dDate').value;
-  const to = document.getElementById('dTo').value;
-  if (!title||!msg) { toast('⚠️ Fill in the title and message first.'); return; }
-  if (!isConnected) { toast('⚠️ Connect your wallet to seal a drop onchain.'); return; }
-  const nd = {
-    id: allDrops.length+1,
-    from: curUser ? curUser.handle : '@YoungestGrandad',
-    to: to||'Ritual Community',title,msg,
-    date: date||'2025-12-31',status:'sealed',type:'Message',
-    unlock: date ? new Date(date).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : 'TBD'
-  };
-  allDrops.unshift(nd);
-  document.getElementById('dTitle').value='';
-  document.getElementById('dMsg').value='';
-  document.getElementById('dDate').value='';
-  document.getElementById('dTo').value='';
-  toast('🔒 Drop sealed! It will reveal to the community on the date you chose.');
-  go('drops', document.querySelectorAll('.nav-link')[1]);
-}
-
-// ─── VOUCH ────────────────────────────────────────────
-function openVouch(handle) {
-  document.getElementById('vHandle').value = handle;
-  document.getElementById('vouchOverlay').style.display='flex';
-}
-
-function doVouch() {
-  const h = document.getElementById('vHandle').value;
-  if (!h) { toast('⚠️ Enter a builder handle.'); return; }
-  closeOverlay('vouchOverlay');
-  toast('✅ Vouched for ' + h + '! Signed & permanent on Ritual Network.');
-  const b = allBldrs.find(x=>x.handle===h||x.handle==='@'+h.replace('@',''));
-  if (b) b.vouches++;
-  if (document.getElementById('page-builders').classList.contains('active')) renderBldrs();
-}
-
-// ─── SHARE TO X ───────────────────────────────────────
-function shareX() {
-  const txt = encodeURIComponent('Just sealed a Legacy Drop on @RitualNetwork — the onchain social layer for the Ritual ecosystem. Build your mark. Seal your word.\n\nhttps://ritual-network-bice.vercel.app\n\n#Ritual #Web3 #BuildersOfRitual');
-  window.open('https://twitter.com/intent/tweet?text=' + txt, '_blank');
-}
-
-// ─── MODALS ───────────────────────────────────────────
-function openWallet() { document.getElementById('walletOverlay').style.display='flex'; }
-function closeOverlay(id) { document.getElementById(id).style.display='none'; }
-function closeBg(e,id) { if(e.target===e.currentTarget) closeOverlay(id); }
-
-// ─── VAULT TABS ───────────────────────────────────────
-function vTab(i, el) {
-  document.querySelectorAll('.v-tab').forEach(t=>t.classList.remove('active'));
-  el.classList.add('active');
-  [0,1,2].forEach(j=>{ const t=document.getElementById('vt'+j); if(t) t.style.display=j===i?'block':'none'; });
-  if (i===2 && !isConnected) { document.getElementById('giftWalletWarn').style.display='block'; }
-}
-
-function pickR(grpOrEl, el) {
-  let grp = typeof grpOrEl==='string' ? document.getElementById(grpOrEl) : grpOrEl;
+function pickR(g,el){
+  const grp=typeof g==='string'?document.getElementById(g):g;
   grp.querySelectorAll('.ro').forEach(o=>o.classList.remove('on'));
   el.classList.add('on');
 }
 
-// ─── TOAST ────────────────────────────────────────────
-let toastTimer;
-function toast(msg) {
-  const t = document.getElementById('toastEl');
-  const ico = msg.match(/^[^\w\s]/) ? msg[0] : '✅';
-  document.getElementById('toastIco').textContent = ico;
-  document.getElementById('toastTxt').textContent = msg.replace(/^[^\w\s]/,'').trim();
-  t.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(()=>t.classList.remove('show'), 4000);
+// RENDERS
+function renderHome(){
+  animStats();
+  const f=document.getElementById('homeFeed');if(!f)return;
+  f.innerHTML=FEED_DATA.map(fd=>{
+    const b=fd.b;
+    const av=`<div class="ava" style="background:${b.color}18;color:${b.color}">${b.initials}</div>`;
+    let body='';
+    if(fd.type==='drop'){
+      const op=fd.action.includes('opened');
+      body=`<div class="sealed-row"><div style="font-size:1.2rem">${op?'🎉':'🔒'}</div><div class="st"><div class="stitle">${fd.detail}</div><div class="ssub">${op?'Now public':'Sealed · future date'}</div></div>${!op?'<div class="schip">SEALED</div>':''}</div>`;
+    }else{
+      body=`<div class="fb">${b.handle} <strong>${fd.action}</strong> ${fd.target||''}<br><span style="font-style:italic;color:var(--text3)">${fd.detail}</span></div>`;
+    }
+    return `<div class="fc"><div class="ft">${av}<div class="fw"><div class="fn">${b.name} <span style="color:var(--text3);font-weight:400">${b.handle}</span></div><div class="fwhen">${fd.time}</div></div><div class="badge ${fd.badge}">${fd.badge==='bd'?'Legacy Drop':fd.badge==='bv'?'Vouch':'Joined'}</div></div>${body}<div class="fact"><button class="fa" onclick="toast('❤️ Hearted!')">❤ Heart</button><button class="fa" onclick="shareHomeX()">🐦 Share</button></div></div>`;
+  }).join('');
+}
+function shareHomeX(){window.open('https://twitter.com/intent/tweet?text='+encodeURIComponent('Just exploring Ritual Network — the onchain identity & legacy layer.\n\nhttps://ritual-network-bice.vercel.app\n\n#Ritual #Web3 #BuildersOfRitual'),'_blank');}
+
+function animStats(){
+  const t=[allBldrs.length,allDrops.length,allBldrs.reduce((s,b)=>s+b.vouches,0),allBldrs.reduce((s,b)=>s+b.apps,0)];
+  ['s1','s2','s3','s4'].forEach((id,i)=>{
+    let c=0;const el=document.getElementById(id);if(!el)return;
+    const step=Math.ceil(t[i]/40);
+    const tm=setInterval(()=>{c=Math.min(c+step,t[i]);el.textContent=c;if(c>=t[i])clearInterval(tm);},28);
+  });
 }
 
-// ─── CANVAS BG (Animated network nodes) ──────────────
-function initCanvas() {
-  const c = document.getElementById('bgCanvas');
-  const ctx = c.getContext('2d');
-  let W, H, nodes = [];
-  function resize() {
-    W = c.width = window.innerWidth;
-    H = c.height = window.innerHeight;
-  }
-  resize();
-  window.addEventListener('resize', resize);
-  for (let i=0; i<50; i++) {
-    nodes.push({
-      x: Math.random()*window.innerWidth,
-      y: Math.random()*window.innerHeight,
-      vx: (Math.random()-0.5)*0.3,
-      vy: (Math.random()-0.5)*0.3,
-      r: Math.random()*2+1,
-    });
-  }
-  function draw() {
+function renderDrops(){
+  const g=document.getElementById('dropsGrid');if(!g)return;
+  const list=dropFilter==='all'?allDrops:allDrops.filter(d=>dropFilter==='sealed'?d.status==='sealed':dropFilter==='opened'?d.status==='opened':d.to==='Ritual Community');
+  g.innerHTML=list.map(d=>`<div class="dc ${d.status==='opened'?'opened':''}"><div class="dstat ${d.status}">${d.status==='sealed'?'🔒 Sealed':'🎉 Revealed'}</div><div class="dtxt">${d.title}</div><div class="dfrom">From ${d.from} → ${d.to}</div><div class="dmsg">${d.status==='opened'?d.msg:d.msg.substring(0,65)+'...'}</div><div class="dfoot"><div class="ddate">${d.status==='sealed'?'Unlocks '+d.unlock:'Opened '+d.unlock}</div><button class="xbtn" onclick="shareHomeX()">Share to X</button></div></div>`).join('');
+}
+function filterDrops(f,el){dropFilter=f;document.querySelectorAll('#dropFilters .ro').forEach(b=>b.classList.remove('on'));el.classList.add('on');renderDrops();}
+
+function renderBldrs(list){
+  const g=document.getElementById('bldGrid');if(!g)return;
+  g.innerHTML=(list||allBldrs).map(b=>`<div class="bc" onclick="viewBld(${b.id})"><div class="bt"><div class="ba" style="background:${b.color}18;color:${b.color}">${b.initials}${b.active?'<div class="dot"></div>':''}</div><div><div class="bnm">${b.name}</div><div class="bhd">${b.handle}</div></div></div><div class="bbio">${b.bio}</div><div class="tags">${b.tags.map(t=>`<span class="tag">${t}</span>`).join('')}</div><div class="bstats"><div class="bs"><div class="bsn">${b.vouches}</div><div class="bsl">Vouches</div></div><div class="bs"><div class="bsn">${b.drops}</div><div class="bsl">Drops</div></div><div class="bs"><div class="bsn">${b.apps}</div><div class="bsl">Apps</div></div></div><button class="vb" onclick="event.stopPropagation();openQV('${b.handle}')">✅ Vouch for ${b.name.split(' ')[0]}</button></div>`).join('');
+}
+function searchBld(q){const lo=q.toLowerCase();renderBldrs(q?allBldrs.filter(b=>b.name.toLowerCase().includes(lo)||b.handle.toLowerCase().includes(lo)||b.tags.some(t=>t.toLowerCase().includes(lo))):null);}
+function viewBld(id){const b=allBldrs.find(x=>x.id===id);if(!b)return;curUser=b;go('profile',document.querySelectorAll('.nav-link')[4]);}
+
+function renderLB(){
+  const bv=[...allBldrs].sort((a,b)=>b.vouches-a.vouches);
+  const ba=[...allBldrs].sort((a,b)=>b.apps-a.apps);
+  const html=(arr,key)=>arr.map((b,i)=>`<div class="lr"><div class="lrk ${i===0?'rkg':i===1?'rks':i===2?'rkb':'rkd'}">#${i+1}</div><div style="width:32px;height:32px;border-radius:50%;background:${b.color}18;color:${b.color};display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.7rem;flex-shrink:0">${b.initials}</div><div style="flex:1"><div class="lnm">${b.name}</div><div style="font-size:0.72rem;color:var(--text3)">${b.handle}</div></div><div class="lsc">${b[key]}</div></div>`).join('');
+  document.getElementById('lbV').innerHTML=html(bv,'vouches');
+  document.getElementById('lbA').innerHTML=html(ba,'apps');
+}
+
+function renderProfile(){
+  const pc=document.getElementById('profContent');if(!pc)return;
+  if(!curUser){pc.innerHTML=`<div class="empty"><div style="font-size:2rem;margin-bottom:.8rem">👤</div><div style="font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;color:var(--text);margin-bottom:7px">Your Profile Lives Here</div><div style="color:var(--text2);font-size:0.85rem;margin-bottom:1.3rem">Connect your wallet to create your builder identity.</div><button class="btn-glow" onclick="openWallet()">Connect & Create Profile</button></div>`;return;}
+  const b=curUser;
+  const rank=[...allBldrs].sort((a,c)=>c.vouches-a.vouches).findIndex(x=>x.id===b.id)+1;
+  pc.innerHTML=`<div class="ph"><div class="pa" style="background:${b.color}18;color:${b.color}">${b.initials}</div><div style="flex:1"><div class="pnm">${b.name}</div><div class="phd">${b.handle} · ${b.wallet}</div><div class="pbio">${b.bio}</div><div class="tags">${b.tags.map(t=>`<span class="tag">${t}</span>`).join('')}</div><div class="pnums"><div class="pn"><div class="pnn">${b.vouches}</div><div class="pnl">Vouches</div></div><div class="pn"><div class="pnn">${b.drops}</div><div class="pnl">Drops</div></div><div class="pn"><div class="pnn">${b.apps}</div><div class="pnl">Apps</div></div><div class="pn"><div class="pnn">#${rank}</div><div class="pnl">Rank</div></div></div></div></div><div class="dg">${allDrops.filter(d=>d.from===b.handle).map(d=>`<div class="dc"><div class="dstat sealed">🔒 Sealed</div><div class="dtxt">${d.title}</div><div class="dfrom">To: ${d.to}</div><div class="dmsg">${d.msg.substring(0,80)}...</div><div class="dfoot"><div class="ddate">Unlocks ${d.unlock}</div><button class="xbtn" onclick="shareHomeX()">Share</button></div></div>`).join('')||'<div style="color:var(--text3);font-size:0.83rem;padding:1rem 0">No drops yet — seal your first!</div>'}</div>`;
+}
+
+// MODALS
+function openWallet(){document.getElementById('walletOverlay').style.display='flex';}
+function openQV(h){document.getElementById('qvHandle').value=h;document.getElementById('vouchOverlay').style.display='flex';}
+function closeO(id){document.getElementById(id).style.display='none';}
+function closeBg(e,id){if(e.target===e.currentTarget)closeO(id);}
+
+// TOAST
+let toastTimer;
+function toast(msg){
+  const t=document.getElementById('toastEl');
+  const ico=msg.match(/^[^\w\s]/)?msg[0]:'✅';
+  document.getElementById('toastIco').textContent=ico;
+  document.getElementById('toastTxt').textContent=msg.replace(/^[^\w\s]/,'').trim();
+  t.classList.add('show');clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>t.classList.remove('show'),4000);
+}
+
+// CANVAS BG
+(function initCanvas(){
+  const c=document.getElementById('bgCanvas');
+  const ctx=c.getContext('2d');
+  let W,H,nodes=[];
+  function resize(){W=c.width=window.innerWidth;H=c.height=window.innerHeight;}
+  resize();window.addEventListener('resize',resize);
+  for(let i=0;i<55;i++)nodes.push({x:Math.random()*window.innerWidth,y:Math.random()*window.innerHeight,vx:(Math.random()-0.5)*0.28,vy:(Math.random()-0.5)*0.28,r:Math.random()*1.8+0.8});
+  function draw(){
     ctx.clearRect(0,0,W,H);
-    nodes.forEach(n=>{
-      n.x+=n.vx; n.y+=n.vy;
-      if(n.x<0||n.x>W) n.vx*=-1;
-      if(n.y<0||n.y>H) n.vy*=-1;
-    });
-    for(let i=0;i<nodes.length;i++){
-      for(let j=i+1;j<nodes.length;j++){
-        const dx=nodes[i].x-nodes[j].x, dy=nodes[i].y-nodes[j].y;
-        const dist=Math.sqrt(dx*dx+dy*dy);
-        if(dist<140){
-          ctx.beginPath();
-          ctx.moveTo(nodes[i].x,nodes[i].y);
-          ctx.lineTo(nodes[j].x,nodes[j].y);
-          ctx.strokeStyle=`rgba(0,198,255,${0.06*(1-dist/140)})`;
-          ctx.lineWidth=1;
-          ctx.stroke();
-        }
-      }
+    nodes.forEach(n=>{n.x+=n.vx;n.y+=n.vy;if(n.x<0||n.x>W)n.vx*=-1;if(n.y<0||n.y>H)n.vy*=-1;});
+    for(let i=0;i<nodes.length;i++)for(let j=i+1;j<nodes.length;j++){
+      const dx=nodes[i].x-nodes[j].x,dy=nodes[i].y-nodes[j].y,dist=Math.sqrt(dx*dx+dy*dy);
+      if(dist<130){ctx.beginPath();ctx.moveTo(nodes[i].x,nodes[i].y);ctx.lineTo(nodes[j].x,nodes[j].y);ctx.strokeStyle=`rgba(0,198,255,${0.05*(1-dist/130)})`;ctx.lineWidth=1;ctx.stroke();}
     }
-    nodes.forEach(n=>{
-      ctx.beginPath();
-      ctx.arc(n.x,n.y,n.r,0,Math.PI*2);
-      ctx.fillStyle='rgba(0,198,255,0.4)';
-      ctx.fill();
-    });
+    nodes.forEach(n=>{ctx.beginPath();ctx.arc(n.x,n.y,n.r,0,Math.PI*2);ctx.fillStyle='rgba(0,198,255,0.35)';ctx.fill();});
     requestAnimationFrame(draw);
   }
   draw();
-}
+})();
 
-// ─── INIT ─────────────────────────────────────────────
-initCanvas();
-renderHome();
-renderDrops();
-renderBldrs();
-renderLB();
-const dd=new Date(); dd.setMonth(dd.getMonth()+3);
+// INIT
+renderHome();renderDrops();renderBldrs();renderLB();
+const dd=new Date();dd.setMonth(dd.getMonth()+3);
 const di=document.getElementById('dDate');
-if(di) di.value=dd.toISOString().split('T')[0];
+if(di)di.value=dd.toISOString().split('T')[0];
 </script>
 </body>
 </html>
