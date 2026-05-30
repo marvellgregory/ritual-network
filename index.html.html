@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ritual Network</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#06080f;--bg2:#0d1120;--bg3:#111827;
+  --card:#0f1623;--card2:#141c2e;
+  --border:#1e2d47;--border2:#253654;
+  --text:#e8edf5;--text2:#8ca0bc;--text3:#4a6080;
+  --accent:#4f7fff;--accent2:#3d6bff;
+  --gold:#c9a84c;--gold2:#e8c96a;
+  --teal:#2dd4bf;--teal2:#14b8a6;
+  --rose:#f472b6;--rose2:#ec4899;
+  --green:#4ade80;
+  --glow:rgba(79,127,255,0.15);
+  --radius:12px;--radius2:20px;
+}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+nav{
+  position:sticky;top:0;z-index:100;
+  background:rgba(6,8,15,0.92);backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+  padding:0 2rem;height:64px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.logo{font-family:'Syne',sans-serif;font-weight:800;font-size:1.2rem;letter-spacing:-0.02em;color:var(--text);display:flex;align-items:center;gap:8px;cursor:pointer;}
+.logo-dot{width:8px;height:8px;background:var(--accent);border-radius:50%;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(79,127,255,0.5)}50%{box-shadow:0 0 0 6px rgba(79,127,255,0)}}
+.nav-links{display:flex;gap:4px}
+.nav-link{padding:7px 14px;border-radius:8px;font-size:0.85rem;font-weight:500;color:var(--text2);cursor:pointer;transition:all 0.2s;border:none;background:none;}
+.nav-link:hover,.nav-link.active{background:var(--card2);color:var(--text)}
+.nav-right{display:flex;align-items:center;gap:10px}
+.wallet-btn{padding:8px 18px;border-radius:10px;font-size:0.85rem;font-weight:600;background:var(--accent);color:#fff;border:none;cursor:pointer;transition:all 0.2s;font-family:'DM Sans',sans-serif;}
+.wallet-btn:hover{background:var(--accent2);transform:translateY(-1px)}
+.wallet-btn.connected{background:var(--card2);color:var(--teal);border:1px solid var(--teal2);font-size:0.8rem}
+.page{display:none;animation:fadeIn 0.4s ease}
+.page.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.hero{min-height:88vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:4rem 2rem;position:relative;overflow:hidden;}
+.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 60% 50% at 50% 0%,rgba(79,127,255,0.08) 0%,transparent 70%),radial-gradient(ellipse 40% 40% at 20% 60%,rgba(45,212,191,0.05) 0%,transparent 60%),radial-gradient(ellipse 30% 30% at 80% 40%,rgba(244,114,182,0.05) 0%,transparent 60%);pointer-events:none;}
+.hero-tag{display:inline-flex;align-items:center;gap:8px;background:rgba(79,127,255,0.1);border:1px solid rgba(79,127,255,0.3);color:var(--accent);padding:6px 16px;border-radius:100px;font-size:0.8rem;font-weight:500;margin-bottom:2rem;}
+.hero h1{font-family:'Syne',sans-serif;font-weight:800;font-size:clamp(2.8rem,6vw,5rem);line-height:1.1;letter-spacing:-0.03em;margin-bottom:1.5rem;max-width:800px;}
+.hero h1 span{background:linear-gradient(135deg,var(--accent),var(--teal));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.hero p{font-size:1.1rem;color:var(--text2);max-width:520px;line-height:1.7;margin-bottom:3rem}
+.hero-btns{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+.btn-primary{padding:14px 28px;border-radius:12px;font-size:0.95rem;font-weight:600;background:var(--accent);color:#fff;border:none;cursor:pointer;transition:all 0.2s;font-family:'DM Sans',sans-serif;}
+.btn-primary:hover{background:var(--accent2);transform:translateY(-2px);box-shadow:0 8px 30px rgba(79,127,255,0.3)}
+.btn-secondary{padding:14px 28px;border-radius:12px;font-size:0.95rem;font-weight:600;background:transparent;color:var(--text);border:1px solid var(--border2);cursor:pointer;transition:all 0.2s;font-family:'DM Sans',sans-serif;}
+.btn-secondary:hover{background:var(--card2);border-color:var(--accent)}
+.stats-bar{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:var(--radius2);overflow:hidden;margin:3rem 2rem;}
+.stat-item{background:var(--card);padding:1.5rem;text-align:center}
+.stat-num{font-family:'Syne',sans-serif;font-size:1.8rem;font-weight:800;color:var(--text);margin-bottom:4px}
+.stat-label{font-size:0.8rem;color:var(--text3);font-weight:500;letter-spacing:0.05em;text-transform:uppercase}
+.section{padding:4rem 2rem;max-width:1100px;margin:0 auto}
+.section-header{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:2rem}
+.section-title{font-family:'Syne',sans-serif;font-weight:700;font-size:1.5rem;letter-spacing:-0.02em}
+.section-sub{font-size:0.85rem;color:var(--text3)}
+.section-action{font-size:0.85rem;color:var(--accent);cursor:pointer;font-weight:500}
+.feed-grid{display:flex;flex-direction:column;gap:16px}
+.feed-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius2);padding:1.25rem 1.5rem;transition:border-color 0.2s;}
+.feed-card:hover{border-color:var(--border2)}
+.feed-top{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.avatar{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.85rem;flex-shrink:0;}
+.feed-meta{flex:1}
+.feed-name{font-weight:600;font-size:0.9rem;margin-bottom:2px}
+.feed-time{font-size:0.78rem;color:var(--text3)}
+.feed-badge{padding:3px 10px;border-radius:100px;font-size:0.72rem;font-weight:600;letter-spacing:0.03em;text-transform:uppercase;}
+.badge-drop{background:rgba(201,168,76,0.15);color:var(--gold2);border:1px solid rgba(201,168,76,0.3)}
+.badge-vouch{background:rgba(79,127,255,0.15);color:#7fa8ff;border:1px solid rgba(79,127,255,0.3)}
+.badge-profile{background:rgba(45,212,191,0.1);color:var(--teal);border:1px solid rgba(45,212,191,0.25)}
+.feed-content{font-size:0.9rem;color:var(--text2);line-height:1.65;margin-bottom:14px}
+.feed-content strong{color:var(--text)}
+.feed-footer{display:flex;align-items:center;gap:16px}
+.feed-action{display:flex;align-items:center;gap:5px;font-size:0.8rem;color:var(--text3);cursor:pointer;transition:color 0.2s;background:none;border:none;font-family:'DM Sans',sans-serif;padding:0;}
+.feed-action:hover{color:var(--accent)}
+.sealed-box{background:linear-gradient(135deg,rgba(201,168,76,0.08),rgba(201,168,76,0.03));border:1px solid rgba(201,168,76,0.2);border-radius:12px;padding:14px 16px;margin-bottom:14px;display:flex;align-items:center;gap:12px;}
+.sealed-icon{font-size:1.4rem}
+.sealed-info{flex:1}
+.sealed-title{font-size:0.85rem;font-weight:600;color:var(--gold2);margin-bottom:2px}
+.sealed-timer{font-size:0.78rem;color:var(--text3)}
+.countdown{background:var(--card2);border:1px solid var(--border2);border-radius:8px;padding:4px 10px;font-size:0.75rem;font-weight:600;color:var(--gold);font-family:'Syne',sans-serif;}
+.builders-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+.builder-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius2);padding:1.5rem;transition:all 0.2s;cursor:pointer;}
+.builder-card:hover{border-color:var(--border2);transform:translateY(-2px)}
+.builder-top{display:flex;align-items:center;gap:14px;margin-bottom:14px}
+.builder-avatar{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1rem;position:relative;}
+.builder-avatar .status-dot{position:absolute;bottom:2px;right:2px;width:10px;height:10px;background:var(--green);border-radius:50%;border:2px solid var(--card);}
+.builder-info .name{font-family:'Syne',sans-serif;font-weight:700;font-size:0.95rem;margin-bottom:4px}
+.builder-info .handle{font-size:0.8rem;color:var(--text3)}
+.builder-bio{font-size:0.83rem;color:var(--text2);line-height:1.5;margin-bottom:14px}
+.builder-stats{display:flex;gap:16px;padding-top:14px;border-top:1px solid var(--border)}
+.b-stat{text-align:center}
+.b-stat-num{font-family:'Syne',sans-serif;font-weight:700;font-size:1rem;color:var(--text)}
+.b-stat-label{font-size:0.7rem;color:var(--text3);text-transform:uppercase;letter-spacing:0.05em}
+.vouch-btn{margin-top:12px;width:100%;padding:9px;border-radius:10px;background:transparent;border:1px solid var(--border2);color:var(--accent);font-size:0.82rem;font-weight:600;cursor:pointer;transition:all 0.2s;font-family:'DM Sans',sans-serif;}
+.vouch-btn:hover{background:rgba(79,127,255,0.1);border-color:var(--accent)}
+.vault-container{max-width:640px;margin:0 auto}
+.vault-tabs{display:flex;gap:4px;background:var(--card2);border-radius:12px;padding:4px;margin-bottom:2rem}
+.vault-tab{flex:1;padding:10px;border-radius:9px;text-align:center;font-size:0.85rem;font-weight:500;cursor:pointer;transition:all 0.2s;color:var(--text2);background:none;border:none;font-family:'DM Sans',sans-serif;}
+.vault-tab.active{background:var(--card);color:var(--text);box-shadow:0 1px 4px rgba(0,0,0,0.3)}
+.form-group{margin-bottom:1.25rem}
+.form-label{display:block;font-size:0.82rem;font-weight:500;color:var(--text2);margin-bottom:8px;letter-spacing:0.02em}
+.form-input,.form-textarea,.form-select{width:100%;background:var(--card2);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:0.9rem;transition:border-color 0.2s;outline:none;}
+.form-input,.form-select{padding:11px 14px;height:44px}
+.form-textarea{padding:12px 14px;resize:vertical;min-height:100px;line-height:1.5}
+.form-input:focus,.form-textarea:focus,.form-select:focus{border-color:var(--accent)}
+.form-select{cursor:pointer;appearance:none}
+.form-select option{background:var(--bg3)}
+.radio-group{display:flex;gap:8px;flex-wrap:wrap}
+.radio-option{padding:8px 16px;border-radius:8px;border:1px solid var(--border);font-size:0.83rem;font-weight:500;cursor:pointer;transition:all 0.2s;color:var(--text2);background:var(--card2);}
+.radio-option.selected{border-color:var(--accent);color:var(--accent);background:rgba(79,127,255,0.1)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.submit-btn{width:100%;padding:14px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border:none;font-family:'Syne',sans-serif;font-weight:700;font-size:0.95rem;cursor:pointer;transition:all 0.2s;letter-spacing:0.02em;margin-top:8px;}
+.submit-btn:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(79,127,255,0.35)}
+.profile-header{background:linear-gradient(135deg,rgba(79,127,255,0.06),rgba(45,212,191,0.04));border:1px solid var(--border);border-radius:var(--radius2);padding:2rem;margin-bottom:2rem;display:flex;gap:2rem;align-items:flex-start;}
+.profile-avatar-lg{width:80px;height:80px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1.4rem;flex-shrink:0;border:3px solid var(--accent);}
+.profile-details{flex:1}
+.profile-name{font-family:'Syne',sans-serif;font-weight:800;font-size:1.5rem;letter-spacing:-0.02em;margin-bottom:4px}
+.profile-handle{font-size:0.85rem;color:var(--text3);margin-bottom:8px}
+.profile-bio{font-size:0.9rem;color:var(--text2);line-height:1.6;margin-bottom:12px}
+.profile-tags{display:flex;gap:8px;flex-wrap:wrap}
+.profile-tag{padding:4px 12px;border-radius:100px;font-size:0.75rem;font-weight:500;background:var(--card2);border:1px solid var(--border2);color:var(--text2);}
+.profile-numbers{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border-top:1px solid var(--border);margin-top:1.5rem;padding-top:1.5rem}
+.p-stat{text-align:center}
+.p-stat-num{font-family:'Syne',sans-serif;font-weight:800;font-size:1.3rem;color:var(--text)}
+.p-stat-label{font-size:0.72rem;color:var(--text3);text-transform:uppercase;letter-spacing:0.04em;margin-top:2px}
+.tabs-row{display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:1.5rem}
+.tab-item{padding:10px 20px;font-size:0.85rem;font-weight:500;color:var(--text2);cursor:pointer;border-bottom:2px solid transparent;transition:all 0.2s;background:none;border-top:none;border-left:none;border-right:none;font-family:'DM Sans',sans-serif;}
+.tab-item:hover{color:var(--text)}
+.tab-item.active{color:var(--accent);border-bottom-color:var(--accent)}
+.drops-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+.drop-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius2);padding:1.4rem;position:relative;overflow:hidden;}
+.drop-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--gold),var(--gold2),transparent);}
+.drop-card.opened::before{background:linear-gradient(90deg,var(--teal),var(--teal2),transparent)}
+.drop-status{display:inline-flex;align-items:center;gap:5px;font-size:0.72rem;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;margin-bottom:10px;}
+.drop-status.sealed{color:var(--gold2)}
+.drop-status.opened{color:var(--teal)}
+.drop-from{font-size:0.78rem;color:var(--text3);margin-bottom:8px}
+.drop-msg{font-size:0.88rem;color:var(--text2);line-height:1.55;margin-bottom:12px;font-style:italic}
+.drop-footer{display:flex;align-items:center;justify-content:space-between}
+.drop-date{font-size:0.75rem;color:var(--text3)}
+.share-x{padding:5px 12px;border-radius:7px;font-size:0.75rem;font-weight:600;background:rgba(29,161,242,0.1);border:1px solid rgba(29,161,242,0.25);color:#4dabf7;cursor:pointer;transition:all 0.2s;font-family:'DM Sans',sans-serif;}
+.share-x:hover{background:rgba(29,161,242,0.2)}
+.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.8);backdrop-filter:blur(8px);z-index:200;display:flex;align-items:center;justify-content:center;padding:2rem;}
+.modal{background:var(--card);border:1px solid var(--border2);border-radius:var(--radius2);padding:2rem;max-width:480px;width:100%;position:relative;animation:slideUp 0.3s ease;}
+@keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.modal-close{position:absolute;top:1rem;right:1rem;width:32px;height:32px;background:var(--card2);border:1px solid var(--border);border-radius:8px;color:var(--text2);cursor:pointer;font-size:1.1rem;display:flex;align-items:center;justify-content:center;}
+.modal-close:hover{color:var(--text);background:var(--bg3)}
+.modal-title{font-family:'Syne',sans-serif;font-weight:700;font-size:1.15rem;margin-bottom:0.5rem}
+.modal-sub{font-size:0.85rem;color:var(--text2);margin-bottom:1.5rem;line-height:1.5}
+.connect-options{display:flex;flex-direction:column;gap:10px}
+.connect-opt{display:flex;align-items:center;gap:14px;padding:14px 16px;background:var(--card2);border:1px solid var(--border);border-radius:12px;cursor:pointer;transition:all 0.2s;}
+.connect-opt:hover{border-color:var(--border2);background:var(--bg3)}
+.connect-opt-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;background:var(--bg3);flex-shrink:0;}
+.connect-opt-name{font-weight:600;font-size:0.9rem}
+.connect-opt-sub{font-size:0.78rem;color:var(--text3);margin-top:2px}
+.divider{text-align:center;color:var(--text3);font-size:0.8rem;margin:1rem 0;position:relative}
+.divider::before,.divider::after{content:'';position:absolute;top:50%;width:44%;height:1px;background:var(--border)}
+.divider::before{left:0}.divider::after{right:0}
+.toast{position:fixed;bottom:2rem;right:2rem;z-index:500;background:var(--card);border:1px solid var(--border2);border-radius:12px;padding:14px 18px;font-size:0.88rem;font-weight:500;display:flex;align-items:center;gap:10px;transform:translateX(120%);transition:transform 0.3s ease;max-width:320px;}
+.toast.show{transform:translateX(0)}
+.ticker-bar{background:var(--card2);border-bottom:1px solid var(--border);padding:8px 0;overflow:hidden;white-space:nowrap;}
+.ticker-inner{display:inline-flex;gap:40px;animation:ticker 30s linear infinite;}
+@keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.ticker-item{font-size:0.78rem;color:var(--text3);display:flex;align-items:center;gap:6px}
+.ticker-item span{color:var(--accent)}
+.chip{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:100px;font-size:0.72rem;font-weight:500;}
+.search-bar{width:100%;padding:11px 14px 11px 38px;background:var(--card2);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:0.9rem;outline:none;transition:border-color 0.2s;}
+.search-bar:focus{border-color:var(--accent)}
+.search-wrap{position:relative;margin-bottom:1.5rem}
+.search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:0.9rem}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+.leaderboard{display:flex;flex-direction:column;gap:8px}
+.lb-item{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 16px;}
+.lb-rank{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:0.82rem;flex-shrink:0;}
+.lb-rank.gold{background:rgba(201,168,76,0.15);color:var(--gold2)}
+.lb-rank.silver{background:rgba(180,178,169,0.15);color:#b4b2a9}
+.lb-rank.bronze{background:rgba(239,159,39,0.15);color:#ef9f27}
+.lb-rank.default{background:var(--card2);color:var(--text3)}
+.lb-name{flex:1;font-weight:600;font-size:0.9rem}
+.lb-handle{font-size:0.78rem;color:var(--text3)}
+.lb-score{font-family:'Syne',sans-serif;font-weight:700;font-size:0.9rem;color:var(--accent)}
+</style>
+</head>
+<body>
+
+<!-- LIVE TICKER -->
+<div class="ticker-bar">
+  <div class="ticker-inner">
+    <span class="ticker-item">🔒 <span>@YoungestGrandad</span> sealed a drop · opens in 6 months</span>
+    <span class="ticker-item">✅ <span>@ritualbuilder</span> vouched for @kency17</span>
+    <span class="ticker-item">🎉 <span>A drop sealed for mainnet</span> just unlocked · 47 hearts</span>
+    <span class="ticker-item">🏗 <span>@dotmantissa</span> shipped Ritual Learn · 12 vouches</span>
+    <span class="ticker-item">🔒 <span>@maharshi_eth</span> sealed a community drop · 8 months to go</span>
+    <span class="ticker-item">✅ <span>@tutufly_yy</span> vouched for @aliorbz — ships real things</span>
+    <span class="ticker-item">🎉 <span>Ritual Network v1</span> just launched · be early</span>
+    <span class="ticker-item">🔒 <span>@YoungestGrandad</span> sealed a drop · opens in 6 months</span>
+    <span class="ticker-item">✅ <span>@ritualbuilder</span> vouched for @kency17</span>
+    <span class="ticker-item">🎉 <span>A drop sealed for mainnet</span> just unlocked · 47 hearts</span>
+    <span class="ticker-item">🏗 <span>@dotmantissa</span> shipped Ritual Learn · 12 vouches</span>
+    <span class="ticker-item">🔒 <span>@maharshi_eth</span> sealed a community drop · 8 months to go</span>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav>
+  <div class="logo" onclick="showPage('home')">
+    <div class="logo-dot"></div>
+    Ritual Network
+  </div>
+  <div class="nav-links">
+    <button class="nav-link active" onclick="showPage('home',this)">Home</button>
+    <button class="nav-link" onclick="showPage('drops',this)">Legacy Drops</button>
+    <button class="nav-link" onclick="showPage('builders',this)">Builders</button>
+    <button class="nav-link" onclick="showPage('leaderboard',this)">Leaderboard</button>
+    <button class="nav-link" onclick="showPage('profile',this)">My Profile</button>
+  </div>
+  <div class="nav-right">
+    <button class="wallet-btn" id="walletBtn" onclick="openWalletModal()">Connect Wallet</button>
+  </div>
+</nav>
+
+<!-- HOME PAGE -->
+<div class="page active" id="page-home">
+  <div class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-tag">⚡ The Social Layer of Ritual</div>
+    <h1>Build your mark.<br><span>Seal your word.</span></h1>
+    <p>The onchain identity, reputation, and legacy platform for the Ritual community. Create your builder profile, seal future drops, vouch for people you trust.</p>
+    <div class="hero-btns">
+      <button class="btn-primary" onclick="openWalletModal()">Create Your Profile</button>
+      <button class="btn-secondary" onclick="showPage('drops',document.querySelectorAll('.nav-link')[1])">Explore Legacy Drops</button>
+    </div>
+  </div>
+  <div class="stats-bar">
+    <div class="stat-item"><div class="stat-num" id="stat1">0</div><div class="stat-label">Builders</div></div>
+    <div class="stat-item"><div class="stat-num" id="stat2">0</div><div class="stat-label">Legacy Drops</div></div>
+    <div class="stat-item"><div class="stat-num" id="stat3">0</div><div class="stat-label">Vouches Given</div></div>
+    <div class="stat-item"><div class="stat-num" id="stat4">0</div><div class="stat-label">Apps Shipped</div></div>
+  </div>
+  <div class="section">
+    <div class="section-header">
+      <div>
+        <div class="section-title">Live Feed</div>
+        <div class="section-sub" style="margin-top:4px">What the community is doing right now</div>
+      </div>
+      <div class="section-action" onclick="showPage('drops',document.querySelectorAll('.nav-link')[1])">View all drops →</div>
+    </div>
+    <div class="feed-grid" id="homeFeed"></div>
+  </div>
+</div>
+
+<!-- LEGACY DROPS PAGE -->
+<div class="page" id="page-drops">
+  <div class="section">
+    <div class="section-header">
+      <div>
+        <div class="section-title">Legacy Drops Wall</div>
+        <div class="section-sub" style="margin-top:4px">Messages sealed in time — opening to the community</div>
+      </div>
+      <button class="btn-primary" style="padding:9px 18px;font-size:0.85rem" onclick="showPage('seal',document.querySelectorAll('.nav-link')[4])">+ Seal a Drop</button>
+    </div>
+    <div style="display:flex;gap:8px;margin-bottom:1.5rem;flex-wrap:wrap">
+      <button class="radio-option selected" onclick="filterDrops('all',this)">All</button>
+      <button class="radio-option" onclick="filterDrops('sealed',this)">🔒 Sealed</button>
+      <button class="radio-option" onclick="filterDrops('opened',this)">🎉 Opened</button>
+      <button class="radio-option" onclick="filterDrops('community',this)">🌐 Community</button>
+    </div>
+    <div class="drops-grid" id="dropsGrid"></div>
+  </div>
+</div>
+
+<!-- BUILDERS PAGE -->
+<div class="page" id="page-builders">
+  <div class="section">
+    <div class="section-header">
+      <div>
+        <div class="section-title">Builder Directory</div>
+        <div class="section-sub" style="margin-top:4px">The people building the Ritual ecosystem</div>
+      </div>
+    </div>
+    <div class="search-wrap">
+      <div class="search-icon">🔍</div>
+      <input class="search-bar" type="text" placeholder="Search builders, X handles, or skills..." oninput="searchBuilders(this.value)">
+    </div>
+    <div class="builders-grid" id="buildersGrid"></div>
+  </div>
+</div>
+
+<!-- LEADERBOARD -->
+<div class="page" id="page-leaderboard">
+  <div class="section">
+    <div class="section-header">
+      <div>
+        <div class="section-title">Builder Leaderboard</div>
+        <div class="section-sub" style="margin-top:4px">Ranked by vouches, drops sealed, and apps shipped</div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:2rem">
+      <div>
+        <div style="font-size:0.8rem;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:12px">Top Vouched</div>
+        <div class="leaderboard" id="lbVouched"></div>
+      </div>
+      <div>
+        <div style="font-size:0.8rem;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:12px">Most Apps Shipped</div>
+        <div class="leaderboard" id="lbApps"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PROFILE PAGE -->
+<div class="page" id="page-profile">
+  <div class="section" id="profileContent"></div>
+</div>
+
+<!-- SEAL DROP PAGE -->
+<div class="page" id="page-seal">
+  <div class="section">
+    <div class="section-header">
+      <div>
+        <div class="section-title">Seal a Legacy Drop</div>
+        <div class="section-sub" style="margin-top:4px">Write a message that lives onchain — sealed until the moment you choose</div>
+      </div>
+    </div>
+    <div class="vault-container">
+      <div class="vault-tabs">
+        <button class="vault-tab active" onclick="switchVaultTab(0,this)">📝 Write Drop</button>
+        <button class="vault-tab" onclick="switchVaultTab(1,this)">👤 Vouch Builder</button>
+        <button class="vault-tab" onclick="switchVaultTab(2,this)">🎁 Gift Tokens</button>
+      </div>
+      <div id="vaultTab0">
+        <div class="form-group">
+          <label class="form-label">Message Title</label>
+          <input class="form-input" id="dropTitle" placeholder="e.g. To the Ritual community when mainnet launches">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Your Message</label>
+          <textarea class="form-textarea" id="dropMsg" style="min-height:130px" placeholder="Write your message here. It will be sealed and revealed on the date you choose..."></textarea>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Recipient (optional)</label>
+            <input class="form-input" id="dropTo" placeholder="@xhandle or leave blank">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Unlock Date</label>
+            <input class="form-input" type="date" id="dropDate" style="color-scheme:dark">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Visibility</label>
+          <div class="radio-group" id="visibilityGroup">
+            <div class="radio-option selected" onclick="selectRadio('visibilityGroup',this)">🌐 Public reveal</div>
+            <div class="radio-option" onclick="selectRadio('visibilityGroup',this)">👥 Community only</div>
+            <div class="radio-option" onclick="selectRadio('visibilityGroup',this)">🔒 Recipient only</div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Drop Type</label>
+          <div class="radio-group" id="typeGroup">
+            <div class="radio-option selected" onclick="selectRadio('typeGroup',this)">💌 Message</div>
+            <div class="radio-option" onclick="selectRadio('typeGroup',this)">🤝 Promise</div>
+            <div class="radio-option" onclick="selectRadio('typeGroup',this)">🎁 Dedication</div>
+            <div class="radio-option" onclick="selectRadio('typeGroup',this)">⏳ Future self</div>
+          </div>
+        </div>
+        <button class="submit-btn" onclick="sealDrop()">🔒 Seal This Drop</button>
+      </div>
+      <div id="vaultTab1" style="display:none">
+        <div style="background:rgba(79,127,255,0.05);border:1px solid rgba(79,127,255,0.15);border-radius:12px;padding:16px;margin-bottom:1.5rem">
+          <div style="font-size:0.85rem;color:var(--text2);line-height:1.6">Vouches are wallet-signed, permanent, and visible on a builder's public profile.</div>
+        </div>
+        <div class="form-group"><label class="form-label">Builder's X Handle</label><input class="form-input" placeholder="@builderhandle"></div>
+        <div class="form-group"><label class="form-label">Wallet Address (optional)</label><input class="form-input" placeholder="0x..."></div>
+        <div class="form-group">
+          <label class="form-label">Your Endorsement</label>
+          <textarea class="form-textarea" placeholder="Ships consistently. Reliable contributor..." style="min-height:80px" maxlength="200"></textarea>
+          <div style="font-size:0.75rem;color:var(--text3);margin-top:6px">Max 200 characters.</div>
+        </div>
+        <button class="submit-btn" onclick="showToast('✅ Vouch signed and recorded permanently!')">✅ Sign & Vouch Permanently</button>
+      </div>
+      <div id="vaultTab2" style="display:none">
+        <div style="background:rgba(201,168,76,0.06);border:1px solid rgba(201,168,76,0.2);border-radius:12px;padding:16px;margin-bottom:1.5rem">
+          <div style="font-size:0.85rem;color:var(--gold2);font-weight:600;margin-bottom:4px">Testnet Token Gift</div>
+          <div style="font-size:0.83rem;color:var(--text2);line-height:1.5">Send Ritual testnet tokens to another builder as a recognition gift.</div>
+        </div>
+        <div class="form-group"><label class="form-label">Recipient X Handle</label><input class="form-input" placeholder="@builderhandle"></div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Amount (RITUAL)</label><input class="form-input" type="number" placeholder="100"></div>
+          <div class="form-group">
+            <label class="form-label">Occasion</label>
+            <select class="form-select">
+              <option>Recognition 🏆</option>
+              <option>Shipped something 🚀</option>
+              <option>Helped me 🤝</option>
+              <option>Just because 💙</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group"><label class="form-label">Gift Message (optional)</label><input class="form-input" placeholder="You shipped something awesome..."></div>
+        <button class="submit-btn" onclick="showToast('🎁 Gift sent! The recipient will get a shareable card.')">🎁 Send Token Gift</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- WALLET MODAL -->
+<div class="modal-backdrop" id="walletModal" style="display:none" onclick="closeModalBg(event)">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('walletModal')">✕</button>
+    <div class="modal-title">Connect to Ritual Network</div>
+    <div class="modal-sub">Connect your wallet and link your X account to create your onchain identity.</div>
+    <div class="connect-options">
+      <div class="connect-opt" onclick="connectWallet('MetaMask')">
+        <div class="connect-opt-icon">🦊</div>
+        <div><div class="connect-opt-name">MetaMask</div><div class="connect-opt-sub">Browser extension wallet</div></div>
+      </div>
+      <div class="connect-opt" onclick="connectWallet('WalletConnect')">
+        <div class="connect-opt-icon">🔗</div>
+        <div><div class="connect-opt-name">WalletConnect</div><div class="connect-opt-sub">Mobile & desktop wallets</div></div>
+      </div>
+      <div class="connect-opt" onclick="connectWallet('Coinbase Wallet')">
+        <div class="connect-opt-icon">🔵</div>
+        <div><div class="connect-opt-name">Coinbase Wallet</div><div class="connect-opt-sub">Self-custody crypto wallet</div></div>
+      </div>
+    </div>
+    <div class="divider">or enter details manually</div>
+    <div class="form-group"><label class="form-label">Wallet Address</label><input class="form-input" id="manualWallet" placeholder="0x..."></div>
+    <div class="form-group" style="margin-bottom:0"><label class="form-label">Your X Handle</label><input class="form-input" id="manualX" placeholder="@yourhandle"></div>
+    <button class="submit-btn" style="margin-top:1rem" onclick="manualConnect()">Continue →</button>
+  </div>
+</div>
+
+<!-- VOUCH MODAL -->
+<div class="modal-backdrop" id="vouchModal" style="display:none" onclick="closeModalBg(event)">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('vouchModal')">✕</button>
+    <div class="modal-title">Vouch for a Builder</div>
+    <div class="modal-sub">Your vouch is wallet-signed and permanent. It becomes part of their onchain reputation.</div>
+    <div class="form-group"><label class="form-label">Builder's X Handle</label><input class="form-input" id="vouchHandle" placeholder="@builderhandle"></div>
+    <div class="form-group"><label class="form-label">Your endorsement (1-2 lines)</label><input class="form-input" id="vouchNote" placeholder="Ships consistently. Real builder." maxlength="100"></div>
+    <button class="submit-btn" onclick="submitVouch()">Sign & Vouch →</button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <span id="toastIcon">✅</span>
+  <span id="toastMsg"></span>
+</div>
+
+<script>
+const BUILDERS=[
+  {id:1,name:"Marvell D. Gregory",handle:"@YoungestGrandad",wallet:"0x1a2b...3c4d",bio:"Head of Sales at SalesTarget.ai · Youngest Grandad energy · Building for generations, not transactions.",tags:["Builder","Sales","Web3"],apps:3,vouches:14,drops:5,color:"#4f7fff",initials:"MG",active:true},
+  {id:2,name:"Maharshi Eth",handle:"@maharshi_17904",wallet:"0x2b3c...4d5e",bio:"Shipped Ritual Testnet Card · DeFi developer · On Ritual since genesis.",tags:["Dev","DeFi","Builder"],apps:2,vouches:22,drops:3,color:"#2dd4bf",initials:"ME",active:true},
+  {id:3,name:"Kency",handle:"@kency17",wallet:"0x3c4d...5e6f",bio:"GM Strike creator · Consistency is a superpower · Showing up every 24 hours.",tags:["Builder","Consistency"],apps:1,vouches:18,drops:7,color:"#c9a84c",initials:"KC",active:false},
+  {id:4,name:"Dot Mantissa",handle:"@dotmantissa",wallet:"0x4d5e...6f7g",bio:"Built Ritual Learn · Educator first, developer second · Making Web3 accessible.",tags:["Education","Dev"],apps:1,vouches:31,drops:2,color:"#f472b6",initials:"DM",active:true},
+  {id:5,name:"Thomas",handle:"@Thomas",wallet:"0x5e6f...7g8h",bio:"Siggy Streaks — streak culture in Web3 · Consistency protocol.",tags:["Gaming","Streaks"],apps:1,vouches:9,drops:4,color:"#a78bfa",initials:"TH",active:false},
+  {id:6,name:"Tutufly",handle:"@tutufly_yy",wallet:"0x6f7g...8h9i",bio:"Siggy Surfers builder · Surf the Ritual wave · UX-obsessed.",tags:["Gaming","UX","Builder"],apps:1,vouches:16,drops:1,color:"#fb923c",initials:"TF",active:true},
+];
+const DROPS=[
+  {id:1,from:"@YoungestGrandad",to:"Ritual Community",title:"When Mainnet Launches",msg:"I sealed this the day I started building on Ritual testnet. If you're reading this, we made it. The vision was real. To every builder who shipped something — this was worth it.",date:"2025-12-01",status:"sealed",type:"Message",unlock:"Dec 1, 2025"},
+  {id:2,from:"@maharshi_17904",to:"@kency17",title:"To the GM Striker",msg:"You showed up every single day when most people quit. That's a kind of discipline that builds empires. This is for you.",date:"2024-08-15",status:"opened",type:"Dedication",unlock:"Aug 15, 2024"},
+  {id:3,from:"@kency17",to:"Future Self",title:"A Note to My Future Self",msg:"Right now it feels uncertain. Keep going. The grind you're putting in on Ritual testnet — someone's watching. Stay consistent. You'll look back on this and smile.",date:"2025-06-01",status:"sealed",type:"Future self",unlock:"Jun 1, 2025"},
+  {id:4,from:"@dotmantissa",to:"Ritual Community",title:"For Every New Builder",msg:"When I built Ritual Learn I wanted one thing: that someone would use it to write their first smart contract. If that's you — welcome. This whole network is for you.",date:"2024-11-30",status:"opened",type:"Promise",unlock:"Nov 30, 2024"},
+  {id:5,from:"@YoungestGrandad",to:"@maharshi_17904",title:"A Dedication to a Real Builder",msg:"You shipped before anyone was watching. That's the mark of a true builder. This drop is yours.",date:"2025-09-01",status:"sealed",type:"Dedication",unlock:"Sep 1, 2025"},
+  {id:6,from:"@tutufly_yy",to:"Ritual Community",title:"When Siggy Surfers Hits 1000 Players",msg:"Remember the small beginnings. Sealed this at 3 players — me, my friend, and someone from Discord I never met. This community is everything.",date:"2025-07-15",status:"sealed",type:"Message",unlock:"Jul 15, 2025"},
+];
+const FEED_DATA=[
+  {type:"drop",builder:BUILDERS[0],action:"sealed a Legacy Drop",detail:"To the Ritual Community — When Mainnet Launches",badge:"badge-drop",time:"2h ago"},
+  {type:"vouch",builder:BUILDERS[3],action:"vouched for",target:"@kency17",detail:'"Consistent, reliable, shows up every day. Real builder energy."',badge:"badge-vouch",time:"5h ago"},
+  {type:"drop",builder:BUILDERS[1],action:"opened a Legacy Drop",detail:"Revealed: To the GM Striker — a dedication to consistency",badge:"badge-drop",time:"1d ago"},
+  {type:"profile",builder:BUILDERS[5],action:"joined Ritual Network",detail:"Linked wallet · Connected @tutufly_yy · 1 app shipped",badge:"badge-profile",time:"2d ago"},
+  {type:"vouch",builder:BUILDERS[2],action:"vouched for",target:"@dotmantissa",detail:'"Ships real educational content. Made Web3 more accessible for me."',badge:"badge-vouch",time:"3d ago"},
+];
+let currentUser=null;
+let allDrops=[...DROPS];
+let allBuilders=[...BUILDERS];
+let activeDropFilter='all';
+
+function showPage(id,navEl){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  document.querySelectorAll('.nav-link').forEach(n=>n.classList.remove('active'));
+  if(navEl)navEl.classList.add('active');
+  if(id==='home')renderHome();
+  if(id==='drops')renderDrops();
+  if(id==='builders')renderBuilders();
+  if(id==='leaderboard')renderLeaderboard();
+  if(id==='profile')renderProfile();
+}
+
+function renderHome(){
+  animateStats();
+  const feed=document.getElementById('homeFeed');
+  if(!feed)return;
+  feed.innerHTML=FEED_DATA.map(f=>{
+    const b=f.builder;
+    const av=`<div class="avatar" style="background:${b.color}22;color:${b.color}">${b.initials}</div>`;
+    let content='';
+    if(f.type==='drop'){
+      content=`<div class="sealed-box"><div class="sealed-icon">${f.action.includes('opened')?'🎉':'🔒'}</div><div class="sealed-info"><div class="sealed-title">${f.detail}</div><div class="sealed-timer">${f.action.includes('opened')?'Now public — shared to X':'Sealed · will open at a future date'}</div></div>${f.action.includes('sealed')?'<div class="countdown">SEALED</div>':''}</div>`;
+    }else{
+      content=`<div class="feed-content">${f.builder.handle} <strong>${f.action}</strong> ${f.target||''}<br><span style="font-style:italic;color:var(--text3)">${f.detail}</span></div>`;
+    }
+    return `<div class="feed-card"><div class="feed-top">${av}<div class="feed-meta"><div class="feed-name">${b.name} <span style="color:var(--text3);font-weight:400">${b.handle}</span></div><div class="feed-time">${f.time}</div></div><div class="feed-badge ${f.badge}">${f.badge.includes('drop')?'Legacy Drop':f.badge.includes('vouch')?'Vouch':'Joined'}</div></div>${content}<div class="feed-footer"><button class="feed-action" onclick="showToast('❤️ Hearted!')">❤ Heart</button><button class="feed-action" onclick="showToast('🔗 Share card generated! Opening X...')">🐦 Share to X</button></div></div>`;
+  }).join('');
+}
+
+function animateStats(){
+  const targets=[allBuilders.length,allDrops.length,allBuilders.reduce((s,b)=>s+b.vouches,0),allBuilders.reduce((s,b)=>s+b.apps,0)];
+  ['stat1','stat2','stat3','stat4'].forEach((id,i)=>{
+    let cur=0;const el=document.getElementById(id);if(!el)return;
+    const step=Math.ceil(targets[i]/40);
+    const t=setInterval(()=>{cur=Math.min(cur+step,targets[i]);el.textContent=cur;if(cur>=targets[i])clearInterval(t)},30);
+  });
+}
+
+function renderDrops(){
+  const grid=document.getElementById('dropsGrid');if(!grid)return;
+  const filtered=activeDropFilter==='all'?allDrops:allDrops.filter(d=>activeDropFilter==='sealed'?d.status==='sealed':activeDropFilter==='opened'?d.status==='opened':d.to==='Ritual Community');
+  grid.innerHTML=filtered.map(d=>`<div class="drop-card ${d.status==='opened'?'opened':''}"><div class="drop-status ${d.status}">${d.status==='sealed'?'🔒 Sealed':'🎉 Revealed'}</div><div style="font-family:'Syne',sans-serif;font-weight:700;font-size:0.95rem;margin-bottom:6px">${d.title}</div><div class="drop-from">From ${d.from} → ${d.to}</div><div class="drop-msg">${d.status==='opened'?d.msg:d.msg.substring(0,60)+'...'}</div><div style="display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap"><span class="chip" style="background:rgba(79,127,255,0.08);color:#7fa8ff;border:1px solid rgba(79,127,255,0.2)">${d.type}</span>${d.to==='Ritual Community'?'<span class="chip" style="background:rgba(45,212,191,0.08);color:var(--teal);border:1px solid rgba(45,212,191,0.2)">🌐 Community</span>':''}</div><div class="drop-footer"><div class="drop-date">${d.status==='sealed'?'Unlocks '+d.unlock:'Opened '+d.unlock}</div><button class="share-x" onclick="showToast('🐦 Share card generated! Opening X...')">Share to X</button></div></div>`).join('');
+}
+
+function filterDrops(filter,el){
+  activeDropFilter=filter;
+  document.querySelectorAll('#page-drops .radio-option').forEach(b=>b.classList.remove('selected'));
+  el.classList.add('selected');
+  renderDrops();
+}
+
+function renderBuilders(){
+  const grid=document.getElementById('buildersGrid');if(!grid)return;
+  grid.innerHTML=allBuilders.map(b=>`<div class="builder-card" onclick="viewBuilder(${b.id})"><div class="builder-top"><div class="builder-avatar" style="background:${b.color}22;color:${b.color}">${b.initials}${b.active?'<div class="status-dot"></div>':''}</div><div class="builder-info"><div class="name">${b.name}</div><div class="handle">${b.handle} · ${b.wallet}</div></div></div><div class="builder-bio">${b.bio}</div><div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px">${b.tags.map(t=>`<span class="profile-tag">${t}</span>`).join('')}</div><div class="builder-stats"><div class="b-stat"><div class="b-stat-num">${b.vouches}</div><div class="b-stat-label">Vouches</div></div><div class="b-stat"><div class="b-stat-num">${b.drops}</div><div class="b-stat-label">Drops</div></div><div class="b-stat"><div class="b-stat-num">${b.apps}</div><div class="b-stat-label">Apps</div></div></div><button class="vouch-btn" onclick="event.stopPropagation();openVouchFor('${b.handle}')">✅ Vouch for ${b.name.split(' ')[0]}</button></div>`).join('');
+}
+
+function searchBuilders(q){
+  const lower=q.toLowerCase();
+  const filtered=q?allBuilders.filter(b=>b.name.toLowerCase().includes(lower)||b.handle.toLowerCase().includes(lower)||b.tags.some(t=>t.toLowerCase().includes(lower))):allBuilders;
+  const grid=document.getElementById('buildersGrid');if(!grid)return;
+  if(!filtered.length){grid.innerHTML='<div style="text-align:center;padding:4rem;color:var(--text3)">No builders found</div>';return;}
+  const temp=allBuilders;allBuilders=filtered;renderBuilders();allBuilders=temp;
+}
+
+function renderLeaderboard(){
+  const byVouches=[...allBuilders].sort((a,b)=>b.vouches-a.vouches);
+  const byApps=[...allBuilders].sort((a,b)=>b.apps-a.apps);
+  const lbHtml=(arr,key)=>arr.map((b,i)=>`<div class="lb-item"><div class="lb-rank ${i===0?'gold':i===1?'silver':i===2?'bronze':'default'}">#${i+1}</div><div style="width:36px;height:36px;border-radius:50%;background:${b.color}22;color:${b.color};display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.75rem;flex-shrink:0">${b.initials}</div><div style="flex:1"><div class="lb-name">${b.name}</div><div class="lb-handle">${b.handle}</div></div><div class="lb-score">${b[key]}</div></div>`).join('');
+  document.getElementById('lbVouched').innerHTML=lbHtml(byVouches,'vouches');
+  document.getElementById('lbApps').innerHTML=lbHtml(byApps,'apps');
+}
+
+function renderProfile(){
+  const pc=document.getElementById('profileContent');if(!pc)return;
+  if(!currentUser){
+    pc.innerHTML=`<div style="text-align:center;padding:6rem 2rem"><div style="font-size:2.5rem;margin-bottom:1rem">👤</div><div style="font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:700;color:var(--text);margin-bottom:8px">Your Profile Lives Here</div><div style="color:var(--text2);font-size:0.9rem;margin-bottom:1.5rem">Connect your wallet and link your X account to create your builder identity.</div><button class="btn-primary" onclick="openWalletModal()">Connect & Create Profile</button></div>`;
+    return;
+  }
+  const b=currentUser;
+  pc.innerHTML=`<div class="profile-header"><div class="profile-avatar-lg" style="background:${b.color}22;color:${b.color}">${b.initials}</div><div class="profile-details"><div class="profile-name">${b.name}</div><div class="profile-handle">${b.handle} · ${b.wallet}</div><div class="profile-bio">${b.bio}</div><div class="profile-tags">${b.tags.map(t=>`<span class="profile-tag">${t}</span>`).join('')}</div><div class="profile-numbers"><div class="p-stat"><div class="p-stat-num">${b.vouches}</div><div class="p-stat-label">Vouches</div></div><div class="p-stat"><div class="p-stat-num">${b.drops}</div><div class="p-stat-label">Drops</div></div><div class="p-stat"><div class="p-stat-num">${b.apps}</div><div class="p-stat-label">Apps</div></div><div class="p-stat"><div class="p-stat-num">#${allBuilders.sort((a,c)=>c.vouches-a.vouches).findIndex(x=>x.id===b.id)+1}</div><div class="p-stat-label">Rank</div></div></div></div></div><div class="tabs-row"><button class="tab-item active">My Legacy Drops</button><button class="tab-item">Vouches Received</button><button class="tab-item">Vouches Given</button><button class="tab-item">Apps Shipped</button></div><div class="drops-grid">${allDrops.filter(d=>d.from===b.handle).map(d=>`<div class="drop-card ${d.status==='opened'?'opened':''}"><div class="drop-status ${d.status}">${d.status==='sealed'?'🔒 Sealed':'🎉 Revealed'}</div><div style="font-family:'Syne',sans-serif;font-weight:700;font-size:0.9rem;margin-bottom:6px">${d.title}</div><div class="drop-from">To: ${d.to}</div><div class="drop-msg">${d.msg.substring(0,80)}...</div><div class="drop-footer"><div class="drop-date">${d.status==='sealed'?'Unlocks '+d.unlock:'Opened '+d.unlock}</div><button class="share-x" onclick="showToast('🐦 X share card ready!')">Share</button></div></div>`).join('')||'<div style="color:var(--text3)">No drops yet. Seal your first!</div>'}</div>`;
+}
+
+function viewBuilder(id){
+  const b=allBuilders.find(x=>x.id===id);if(!b)return;
+  currentUser=b;
+  showPage('profile',document.querySelectorAll('.nav-link')[4]);
+}
+
+function openWalletModal(){document.getElementById('walletModal').style.display='flex'}
+function closeModal(id){document.getElementById(id).style.display='none'}
+function closeModalBg(e){if(e.target===e.currentTarget)e.currentTarget.style.display='none'}
+
+function connectWallet(type){
+  const x=document.getElementById('manualX').value||'@YoungestGrandad';
+  const w='0x'+Math.random().toString(16).substr(2,8)+'...'+Math.random().toString(16).substr(2,4);
+  currentUser={...BUILDERS[0],wallet:w,handle:x.startsWith('@')?x:'@'+x};
+  document.getElementById('walletBtn').textContent=w;
+  document.getElementById('walletBtn').className='wallet-btn connected';
+  closeModal('walletModal');
+  showToast('✅ Connected with '+type+'! Welcome to Ritual Network.');
+  showPage('profile',document.querySelectorAll('.nav-link')[4]);
+}
+
+function manualConnect(){
+  const w=document.getElementById('manualWallet').value||'0x'+Math.random().toString(16).substr(2,8)+'...';
+  const x=document.getElementById('manualX').value||'@builder';
+  currentUser={...BUILDERS[0],wallet:w,handle:x.startsWith('@')?x:'@'+x};
+  document.getElementById('walletBtn').textContent=w.substring(0,12)+'...';
+  document.getElementById('walletBtn').className='wallet-btn connected';
+  closeModal('walletModal');
+  showToast('✅ Profile created! Welcome to Ritual Network.');
+  showPage('profile',document.querySelectorAll('.nav-link')[4]);
+}
+
+function openVouchFor(handle){
+  document.getElementById('vouchHandle').value=handle;
+  document.getElementById('vouchModal').style.display='flex';
+}
+
+function submitVouch(){
+  const handle=document.getElementById('vouchHandle').value;
+  if(!handle){showToast('⚠️ Enter a builder handle');return;}
+  closeModal('vouchModal');
+  showToast('✅ Vouched for '+handle+'! Signed & permanent.');
+  const b=allBuilders.find(x=>x.handle===handle||x.handle==='@'+handle.replace('@',''));
+  if(b)b.vouches++;
+  renderBuilders();
+}
+
+function sealDrop(){
+  const title=document.getElementById('dropTitle').value;
+  const msg=document.getElementById('dropMsg').value;
+  const date=document.getElementById('dropDate').value;
+  const to=document.getElementById('dropTo').value;
+  if(!title||!msg){showToast('⚠️ Fill in the title and message');return;}
+  const newDrop={id:allDrops.length+1,from:currentUser?currentUser.handle:'@YoungestGrandad',to:to||'Ritual Community',title,msg,date:date||'2025-12-31',status:'sealed',type:'Message',unlock:date?new Date(date).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}):'TBD'};
+  allDrops.unshift(newDrop);
+  document.getElementById('dropTitle').value='';
+  document.getElementById('dropMsg').value='';
+  document.getElementById('dropDate').value='';
+  document.getElementById('dropTo').value='';
+  showToast('🔒 Drop sealed! It will reveal on the date you chose.');
+  showPage('drops',document.querySelectorAll('.nav-link')[1]);
+}
+
+function switchVaultTab(i,el){
+  document.querySelectorAll('.vault-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  [0,1,2].forEach(j=>{const t=document.getElementById('vaultTab'+j);if(t)t.style.display=j===i?'block':'none'});
+}
+
+function selectRadio(groupOrEl,el){
+  let grp=typeof groupOrEl==='string'?document.getElementById(groupOrEl):groupOrEl;
+  grp.querySelectorAll('.radio-option').forEach(o=>o.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+let toastTimer;
+function showToast(msg){
+  const t=document.getElementById('toast');
+  document.getElementById('toastIcon').textContent=msg.match(/^[^\w]/)?msg[0]:'✅';
+  document.getElementById('toastMsg').textContent=msg.replace(/^[^\w\s]/,'').trim();
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>t.classList.remove('show'),3500);
+}
+
+renderHome();
+renderDrops();
+renderBuilders();
+renderLeaderboard();
+const d=new Date();d.setMonth(d.getMonth()+3);
+const inp=document.getElementById('dropDate');
+if(inp)inp.value=d.toISOString().split('T')[0];
+</script>
+</body>
+</html>
