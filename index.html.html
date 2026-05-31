@@ -300,6 +300,24 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;height:62px;background:rgba(
 
 /* ── EMPTY ── */
 .empty{text-align:center;padding:4rem 2rem;color:var(--text3)}
+
+/* ── FAQ ── */
+.faq-section{max-width:1120px;margin:0 auto;padding:2rem 2.5rem 4rem}
+.faq-title{font-family:'Orbitron',sans-serif;font-weight:700;font-size:1rem;letter-spacing:0.06em;text-transform:uppercase;color:var(--text);margin-bottom:4px}
+.faq-sub{font-size:0.78rem;color:var(--text3);margin-bottom:1.6rem}
+.faq-list{display:flex;flex-direction:column;gap:8px}
+.faq-item{background:rgba(8,25,42,0.7);border:1px solid var(--border);border-radius:14px;overflow:hidden;backdrop-filter:blur(8px);transition:border-color 0.22s}
+.faq-item.open{border-color:rgba(0,212,255,0.25)}
+.faq-q{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;cursor:pointer;gap:12px;user-select:none}
+.faq-q:hover{background:rgba(0,212,255,0.03)}
+.faq-qlbl{font-size:0.85rem;font-weight:600;color:var(--text);line-height:1.4;flex:1}
+.faq-plus{width:26px;height:26px;border-radius:7px;background:rgba(0,212,255,0.08);border:1px solid rgba(0,212,255,0.2);color:var(--accent);display:flex;align-items:center;justify-content:center;font-size:1rem;font-weight:300;flex-shrink:0;transition:all 0.22s;line-height:1}
+.faq-item.open .faq-plus{background:rgba(0,212,255,0.15);transform:rotate(45deg)}
+.faq-a{display:none;padding:0 18px 16px;font-size:0.82rem;color:var(--text2);line-height:1.75;border-top:1px solid var(--border)}
+.faq-a.show{display:block;animation:fadeUp 0.22s ease}
+.faq-a strong{color:var(--accent);font-weight:600}
+.faq-a ul{margin:6px 0 0 1.2rem;display:flex;flex-direction:column;gap:3px}
+.faq-a li{color:var(--text2)}
 </style>
 </head>
 <body>
@@ -464,7 +482,23 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;height:62px;background:rgba(
           <div class="xpc" id="vXCard"><div class="xpfp" id="vXPfp"></div><div class="xpi"><div class="xpn" id="vXNm"></div><div class="xph" id="vXHd"></div><div class="xpb" id="vXBio"></div><div class="xpv">✓ PROFILE FOUND</div></div></div>
           <div class="xnf" id="vXNF">❌ User not found — this X handle doesn't exist on Ritual Network. Ask them to join!</div>
         </div>
-        <div class="fg"><label class="fl">Their Wallet (optional)</label><input class="fi" id="vW" placeholder="0x..."></div>
+        <div class="fg">
+          <label class="fl">Their Wallet Address <span style="font-weight:400;color:var(--text3)">(optional — to send testnet tokens)</span></label>
+          <div style="display:flex;gap:8px;align-items:center">
+            <input class="fi" id="vW" placeholder="0x... paste wallet to also send testnet tokens" style="flex:1">
+            <button onclick="sendVouchGift()" style="white-space:nowrap;height:42px;padding:0 14px;border-radius:10px;background:linear-gradient(135deg,rgba(0,230,118,0.15),rgba(0,229,200,0.08));border:1px solid rgba(0,230,118,0.3);color:var(--green);font-size:0.74rem;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;flex-shrink:0">🎁 Send Tokens</button>
+          </div>
+          <div style="font-size:0.69rem;color:var(--text3);margin-top:4px">Paste their wallet address to send Ritual Testnet ETH as a recognition gift alongside this vouch.</div>
+        </div>
+        <div class="info-box" id="vGiftRow" style="display:none;margin-bottom:1rem">
+          <div style="font-size:0.74rem;font-weight:700;color:var(--green);margin-bottom:8px;font-family:'Orbitron',sans-serif;text-transform:uppercase;letter-spacing:0.04em">💚 Send Ritual Testnet Tokens with Vouch</div>
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+            <input class="fi" type="number" id="vGiftAmt" placeholder="0.001" min="0.000001" step="0.001" style="width:130px;height:36px;font-size:0.82rem">
+            <span style="font-size:0.78rem;color:var(--text2)">ETH (Ritual Testnet)</span>
+            <button onclick="confirmVouchGift()" style="padding:8px 14px;border-radius:9px;background:linear-gradient(135deg,var(--green),var(--teal));color:#020812;border:none;font-family:'Orbitron',sans-serif;font-weight:700;font-size:0.68rem;cursor:pointer;text-transform:uppercase;letter-spacing:0.05em">Confirm Send</button>
+            <button onclick="document.getElementById('vGiftRow').style.display='none'" style="padding:8px 10px;border-radius:9px;background:none;border:1px solid var(--border2);color:var(--text3);font-size:0.72rem;cursor:pointer">Cancel</button>
+          </div>
+        </div>
         <div class="fg">
           <label class="fl">Your Endorsement</label>
           <textarea class="ft" id="vNote" placeholder="Ships consistently. Reliable contributor. Always helps the community..." style="min-height:80px" maxlength="200"></textarea>
@@ -489,23 +523,28 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;height:62px;background:rgba(
       <!-- GIFT TAB -->
       <div id="vt2" style="display:none">
         <div class="warn-box">
-          <div class="warn-title">🎁 Testnet Token Gift</div>
-          <div class="warn-body">Send Ritual testnet tokens as a recognition gift. Creates a real onchain record. <strong style="color:var(--gold)">Requires Ritual Testnet connection.</strong></div>
+          <div class="warn-title">🎁 Ritual Testnet Token Gift</div>
+          <div class="warn-body">Send real Ritual testnet ETH tokens to a builder's wallet as a recognition gift — creates a live onchain transaction. <strong style="color:var(--gold)">Requires wallet connected to Ritual Testnet.</strong></div>
         </div>
         <div id="gwarn" class="info-box" style="display:none">⚠️ Connect wallet to Ritual Testnet first.</div>
         <div class="fg">
-          <label class="fl">Recipient X Account</label>
+          <label class="fl">Recipient X Account <span style="font-weight:400;color:var(--text3)">(optional)</span></label>
           <div class="xrow"><input class="fi" id="gXIn" placeholder="@recipienthandle"><button class="fxbtn" id="gXBtn" onclick="fetchX('g')">🔍 Fetch Details</button></div>
           <div class="xpc" id="gXCard"><div class="xpfp" id="gXPfp"></div><div class="xpi"><div class="xpn" id="gXNm"></div><div class="xph" id="gXHd"></div><div class="xpb" id="gXBio"></div><div class="xpv">✓ PROFILE FOUND</div></div></div>
-          <div class="xnf" id="gXNF">❌ User not found — this X handle doesn't exist on Ritual Network. Ask them to join!</div>
+          <div class="xnf" id="gXNF">❌ User not found. You can still send to a wallet address directly below.</div>
+        </div>
+        <div class="fg">
+          <label class="fl">Recipient Wallet Address <span style="font-weight:400;color:var(--text3)">(required for real transfer)</span></label>
+          <input class="fi" id="gWallet" placeholder="0x... paste the recipient's wallet address">
+          <div style="font-size:0.7rem;color:var(--text3);margin-top:4px">Enter a wallet address to send real testnet tokens. Without it, the gift is recorded as a symbolic onchain note.</div>
         </div>
         <div class="frow">
-          <div class="fg"><label class="fl">Amount (RITUAL)</label><input class="fi" type="number" id="gAmt" placeholder="100" min="1"></div>
+          <div class="fg"><label class="fl">Amount (ETH on Testnet)</label><input class="fi" type="number" id="gAmt" placeholder="0.001" min="0.000001" step="0.001"></div>
           <div class="fg"><label class="fl">Occasion</label><select class="fs" id="gOcc"><option>Recognition 🏆</option><option>Shipped something 🚀</option><option>Helped me 🤝</option><option>Just because 💙</option></select></div>
         </div>
         <div class="fg"><label class="fl">Gift Message</label><input class="fi" id="gMsg" placeholder="You shipped something awesome. Here's a small recognition..."></div>
-        <button class="sbtn" id="gBtn" onclick="sendGift()">🎁 Send Token Gift</button>
-        <div style="font-size:0.7rem;color:var(--text3);margin-top:8px;text-align:center">Records a gift transaction on Ritual Testnet. Real token transfers require smart contract (v2).</div>
+        <button class="sbtn" id="gBtn" onclick="sendGift()">🎁 Send Ritual Testnet Tokens</button>
+        <div style="font-size:0.7rem;color:var(--text3);margin-top:8px;text-align:center;line-height:1.5">Tokens sent are real Ritual Testnet ETH. If no wallet address is provided, a symbolic onchain note is recorded instead.</div>
         <div class="shr" id="gShr">
           <div class="shr-title">🎁 Gift Sent · Ritual Blessing Certificate Issued</div>
           <div class="shr-sub" id="gShrSub"></div>
@@ -516,6 +555,55 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;height:62px;background:rgba(
           </div>
         </div>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── FAQ ── -->
+<div class="faq-section">
+  <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:1.4rem">
+    <div>
+      <div class="faq-title">How Ritual Network Works</div>
+      <div class="faq-sub">Everything you need to know about the platform — tap to expand</div>
+    </div>
+    <div style="font-size:0.68rem;color:var(--text3);text-align:right;line-height:1.6">Questions?<br><span style="color:var(--accent)">Expand below ↓</span></div>
+  </div>
+  <div class="faq-list">
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q"><span class="faq-qlbl">⚡ What is Ritual Network and what does this platform do?</span><span class="faq-plus">+</span></div>
+      <div class="faq-a">Ritual Network is the <strong>social and reputation layer</strong> built on top of the Ritual blockchain ecosystem. This platform lets builders create an onchain identity, endorse each other, seal time-locked messages, and send token gifts — all recorded on the Ritual Testnet. It's your permanent builder profile and legacy in the Ritual ecosystem.</div>
+    </div>
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q"><span class="faq-qlbl">🦊 How do I connect my wallet and get started?</span><span class="faq-plus">+</span></div>
+      <div class="faq-a">Click <strong>Connect Wallet</strong> in the top right. You can connect via <strong>MetaMask</strong> (recommended — it auto-configures Ritual Testnet for you), or enter your wallet address manually. Then link your <strong>X (Twitter) handle</strong> to pull in your public profile and create your builder identity on Ritual Network. Once connected, your profile goes live on the Builder Directory and Leaderboard.</div>
+    </div>
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q"><span class="faq-qlbl">🔒 What are Legacy Drops and how do I seal one?</span><span class="faq-plus">+</span></div>
+      <div class="faq-a"><strong>Legacy Drops</strong> are time-locked messages that are sealed now and revealed on a future date you choose. Think of them as onchain time capsules — for the community, a specific builder, or your future self.<br><br>To seal one: go to <strong>Seal → Write Drop</strong>, optionally fetch a recipient's X profile, write your title and message, set an unlock date, choose visibility (Public / Community / Recipient only) and drop type (Message, Promise, Dedication, Future Self), then hit <strong>Seal This Drop</strong>. Your drop appears on the Legacy Drops Wall and generates a shareable certificate.</div>
+    </div>
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q"><span class="faq-qlbl">✅ What is a Vouch and how does it work?</span><span class="faq-plus">+</span></div>
+      <div class="faq-a">A <strong>Vouch</strong> is a wallet-signed permanent endorsement of another builder. It goes on their public profile and counts toward their reputation score on the Leaderboard.<br><br>To vouch: go to <strong>Seal → Vouch Builder</strong>, fetch the builder's X profile, write a specific endorsement (up to 200 chars), select your role (Builder, Shipper, Community Helper, or Collaborator), and hit <strong>Sign & Vouch Permanently</strong>.<br><br>You can also <strong>Quick Vouch</strong> directly from a builder's card on the Builder Directory. Optionally, paste their wallet address to send them <strong>Ritual Testnet tokens</strong> as a bonus recognition gift alongside the vouch.</div>
+    </div>
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q"><span class="faq-qlbl">🎁 How do I gift Ritual Testnet tokens to another builder?</span><span class="faq-plus">+</span></div>
+      <div class="faq-a">Go to <strong>Seal → Gift Tokens</strong>. You can optionally fetch the recipient's X profile. Then paste their <strong>wallet address</strong> to send them real Ritual Testnet ETH — this triggers an actual onchain transaction from your wallet.<br><br><ul><li>If a wallet address is provided → a <strong>real ETH transfer</strong> is sent on Ritual Testnet.</li><li>If no wallet address → a <strong>symbolic onchain note</strong> is recorded instead.</li></ul>Set the amount (in ETH), pick an occasion, add a message, and hit <strong>Send Ritual Testnet Tokens</strong>. You'll get a confirmation with the transaction hash and a shareable certificate.<br><br>Note: You need Ritual Testnet ETH in your own wallet to send tokens. Make sure you're connected to Ritual Testnet (Chain ID: 1752274).</div>
+    </div>
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q"><span class="faq-qlbl">🏆 What is the Leaderboard and how is it ranked?</span><span class="faq-plus">+</span></div>
+      <div class="faq-a">The <strong>Leaderboard</strong> ranks builders across two dimensions: <strong>Top Vouched</strong> (most endorsements received) and <strong>Most Apps Shipped</strong>. Rankings update live as the community vouches and builders ship apps. Your position on the leaderboard is also shown on your My Profile page. Vouching for builders you believe in is the primary way to grow community reputation.</div>
+    </div>
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q"><span class="faq-qlbl">👤 What's on My Profile and how do I customize it?</span><span class="faq-plus">+</span></div>
+      <div class="faq-a">Your profile shows your <strong>name, X handle, wallet address, bio, tags, and stats</strong> (Vouches, Drops, Apps, Rank). After connecting your wallet and linking your X account, your profile is live. You can click <strong>✏️ Edit Bio</strong> to update your bio at any time — changes save instantly. Your profile also shows all your sealed Legacy Drops in the "My Legacy Drops" tab.</div>
+    </div>
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q"><span class="faq-qlbl">📜 What are the Certificates and can I share them?</span><span class="faq-plus">+</span></div>
+      <div class="faq-a">After every action (sealing a drop, vouching, or gifting tokens), Ritual Network generates a <strong>holographic onchain certificate</strong> — a downloadable image showing the sender, recipient, action details, and a unique certificate ID. You can <strong>View Certificate</strong>, <strong>Download</strong> it, or share it directly to <strong>X (Twitter)</strong> with a pre-filled post that tags the recipient and includes your Ritual Network link.</div>
+    </div>
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q"><span class="faq-qlbl">🌐 What network does this run on? Do I need real ETH?</span><span class="faq-plus">+</span></div>
+      <div class="faq-a">Everything runs on <strong>Ritual Testnet</strong> — a test blockchain, so no real money is involved. Chain ID: <strong>1752274</strong> · RPC: <code style="font-size:0.75rem;background:rgba(0,0,0,0.3);padding:1px 5px;border-radius:4px">ritual-testnet-rpc.eu-north-2.gateway.fm</code><br><br>MetaMask adds this network automatically when you connect. To send testnet tokens you'll need Ritual Testnet ETH in your wallet — check the Ritual community for testnet faucet access.</div>
     </div>
   </div>
 </div>
@@ -789,33 +877,85 @@ function updateLiveStats(){
   }
 }
 
+// ── VOUCH + GIFT HELPERS ──────────────────────────────────
+function sendVouchGift(){
+  const w=document.getElementById('vW').value.trim();
+  if(!w){toast('⚠️ Paste a wallet address first to send tokens.');return;}
+  if(!isConn){toast('⚠️ Connect your wallet first.');return;}
+  document.getElementById('vGiftRow').style.display='block';
+  document.getElementById('vGiftAmt').focus();
+}
+async function confirmVouchGift(){
+  const w=document.getElementById('vW').value.trim();
+  const amt=document.getElementById('vGiftAmt').value;
+  const toU=fetched['v'];const vXIn=document.getElementById('vXIn').value;
+  const rH=toU?toU.handle:(vXIn?(vXIn.startsWith('@')?vXIn:'@'+vXIn):w.substring(0,10)+'...');
+  if(!ethers.isAddress(w)){toast('⚠️ Invalid wallet address.');return;}
+  if(!amt||parseFloat(amt)<=0){toast('⚠️ Enter a valid amount.');return;}
+  try{
+    const provider=new ethers.BrowserProvider(window.ethereum);
+    const signer=await provider.getSigner();
+    const valueWei=ethers.parseEther(String(parseFloat(amt)));
+    const data=ethers.hexlify(ethers.toUtf8Bytes('RITUAL_VOUCH_GIFT:'+rH));
+    const tx=await signer.sendTransaction({to:w,value:valueWei,data:data,gasLimit:60000n});
+    document.getElementById('vGiftRow').style.display='none';
+    addLiveFeedItem('gift',amt,rH,'Recognition 🏆','Sent with vouch on Ritual Network');
+    toast('🎁 '+amt+' ETH sent to '+rH+' on Ritual Testnet! TX: '+tx.hash.substring(0,12)+'...');
+  }catch(e){
+    if(e.code===4001)toast('⚠️ Transaction rejected.');
+    else if(e.message&&e.message.includes('insufficient'))toast('⚠️ Insufficient testnet ETH. Get some from a faucet first.');
+    else toast('⚠️ Transfer failed: '+(e.message||'Unknown error').substring(0,60));
+  }
+}
+
 // ── SEND GIFT ─────────────────────────────────────────────
 async function sendGift(){
   const toU=fetched['g'];const gXIn=document.getElementById('gXIn').value;
   const amt=document.getElementById('gAmt').value;const msg=document.getElementById('gMsg').value;
   const occ=document.getElementById('gOcc').value;
-  if(!toU&&!gXIn){toast('⚠️ Fetch a recipient X account first.');return;}
+  const recipientWallet=document.getElementById('gWallet').value.trim();
+  const hasRecipient=toU||gXIn||recipientWallet;
+  if(!hasRecipient){toast('⚠️ Enter a recipient X handle or wallet address.');return;}
   if(!amt){toast('⚠️ Enter an amount.');return;}
   if(!isConn){document.getElementById('gwarn').style.display='block';toast('⚠️ Connect wallet first.');return;}
   const btn=document.getElementById('gBtn');btn.disabled=true;btn.textContent='⏳ Sending...';
-  const rH=toU?toU.handle:(gXIn.startsWith('@')?gXIn:'@'+gXIn);
+  const rH=toU?toU.handle:(gXIn?(gXIn.startsWith('@')?gXIn:'@'+gXIn):(recipientWallet.substring(0,10)+'...'));
   try{
     const provider=new ethers.BrowserProvider(window.ethereum);
     const signer=await provider.getSigner();
-    const data=ethers.hexlify(ethers.toUtf8Bytes('RITUAL_GIFT:'+rH+':'+amt+':'+msg));
-    const tx=await signer.sendTransaction({to:walletAddr,value:0n,data:data,gasLimit:50000n});
-    lastAct={type:'gift',data:{toUser:toU,amt,msg,occ,txHash:tx.hash,rH}};
-    showPostAction('gift','🎁 Sent '+amt+' RITUAL to '+rH+' · TX: '+tx.hash.substring(0,14)+'...');
-    btn.textContent='✅ Gift Sent!';setTimeout(()=>{btn.disabled=false;btn.textContent='🎁 Send Token Gift';},4000);
-    addLiveFeedItem('gift',amt,rH,occ,msg);
-    toast('🎁 Gift recorded on Ritual Testnet!');
+    if(recipientWallet&&ethers.isAddress(recipientWallet)){
+      // Real ETH transfer to the recipient's wallet on Ritual Testnet
+      const valueWei=ethers.parseEther(String(parseFloat(amt)||0.001));
+      const data=ethers.hexlify(ethers.toUtf8Bytes('RITUAL_GIFT:'+rH+':'+msg));
+      const tx=await signer.sendTransaction({to:recipientWallet,value:valueWei,data:data,gasLimit:60000n});
+      lastAct={type:'gift',data:{toUser:toU,amt,msg,occ,txHash:tx.hash,rH,toWallet:recipientWallet}};
+      showPostAction('gift','🎁 Sent '+amt+' ETH (Ritual Testnet) to '+rH+' · TX: '+tx.hash.substring(0,16)+'...');
+      btn.textContent='✅ Tokens Sent!';setTimeout(()=>{btn.disabled=false;btn.textContent='🎁 Send Ritual Testnet Tokens';},5000);
+      addLiveFeedItem('gift',amt,rH,occ,msg);
+      toast('🎁 Real testnet tokens sent! TX: '+tx.hash.substring(0,12)+'...');
+      document.getElementById('gWallet').value='';
+      document.getElementById('gAmt').value='';
+      document.getElementById('gMsg').value='';
+      document.getElementById('gXIn').value='';
+      document.getElementById('gXCard').classList.remove('show');
+    } else {
+      // No valid wallet — record symbolic onchain note
+      const data=ethers.hexlify(ethers.toUtf8Bytes('RITUAL_GIFT_NOTE:'+rH+':'+amt+':'+msg));
+      const tx=await signer.sendTransaction({to:walletAddr,value:0n,data:data,gasLimit:50000n});
+      lastAct={type:'gift',data:{toUser:toU,amt,msg,occ,txHash:tx.hash,rH}};
+      showPostAction('gift','🎁 Gift of '+amt+' ETH noted for '+rH+' · TX: '+tx.hash.substring(0,14)+'...');
+      btn.textContent='✅ Gift Noted!';setTimeout(()=>{btn.disabled=false;btn.textContent='🎁 Send Ritual Testnet Tokens';},4000);
+      addLiveFeedItem('gift',amt,rH,occ,msg);
+      toast('📝 Gift recorded onchain as note. Add wallet address for real transfer!');
+    }
   }catch(e){
-    btn.disabled=false;btn.textContent='🎁 Send Token Gift';
+    btn.disabled=false;btn.textContent='🎁 Send Ritual Testnet Tokens';
     lastAct={type:'gift',data:{toUser:toU,amt,msg,occ,txHash:null,rH}};
-    showPostAction('gift','🎁 Gift of '+amt+' RITUAL queued for '+rH);
+    showPostAction('gift','🎁 Gift of '+amt+' ETH queued for '+rH);
     addLiveFeedItem('gift',amt,rH,occ,msg);
-    if(e.code===4001)toast('⚠️ Transaction rejected.');
-    else toast('ℹ️ Gift recorded locally. Connect Ritual Testnet for onchain.');
+    if(e.code===4001)toast('⚠️ Transaction rejected by wallet.');
+    else if(e.message&&e.message.includes('insufficient'))toast('⚠️ Insufficient testnet ETH balance. Get testnet tokens first.');
+    else toast('ℹ️ Gift recorded locally. Ensure you\'re on Ritual Testnet.');
   }
 }
 
@@ -1410,6 +1550,16 @@ function toast(msg){
     requestAnimationFrame(draw);
   };draw();
 })();
+
+// ── FAQ ────────────────────────────────────────────────────
+function toggleFaq(item){
+  const a=item.querySelector('.faq-a');
+  const isOpen=item.classList.contains('open');
+  // Close all others
+  document.querySelectorAll('.faq-item.open').forEach(i=>{if(i!==item){i.classList.remove('open');i.querySelector('.faq-a').classList.remove('show');}});
+  item.classList.toggle('open',!isOpen);
+  a.classList.toggle('show',!isOpen);
+}
 
 // ── INIT ───────────────────────────────────────────────────
 renderHome();renderDrops();renderBldrs();renderLB();
