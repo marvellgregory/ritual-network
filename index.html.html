@@ -887,48 +887,66 @@ function sendVouchGift(){
 }
 let _vgPending=false;
 async function confirmVouchGift(){
-  if(_vgPending){toast('⏳ Transaction already pending — check MetaMask.');return;}
+  if(_vgPending){toast('⏳ Already pending — check MetaMask.');return;}
   const w=document.getElementById('vW').value.trim();
   const amt=document.getElementById('vGiftAmt').value;
   const toU=fetched['v'];const vXIn=document.getElementById('vXIn').value;
   const rH=toU?toU.handle:(vXIn?(vXIn.startsWith('@')?vXIn:'@'+vXIn):w.substring(0,10)+'...');
   if(!ethers.isAddress(w)){toast('⚠️ Invalid wallet address.');return;}
   const parsedAmt=parseFloat(amt);
-  if(!amt||parsedAmt<=0||isNaN(parsedAmt)){toast('⚠️ Enter a valid ETH amount (e.g. 0.001).');return;}
-  // Guard: find the confirm button and disable it
+  if(!parsedAmt||parsedAmt<=0){toast('⚠️ Enter a valid amount e.g. 0.001');return;}
   const confirmBtn=document.querySelector('#vGiftRow button[onclick="confirmVouchGift()"]');
+  const resetBtn=()=>{_vgPending=false;if(confirmBtn){confirmBtn.disabled=false;confirmBtn.textContent='Confirm Send';}};
   if(confirmBtn){confirmBtn.disabled=true;confirmBtn.textContent='⏳ Sending...';}
   _vgPending=true;
   try{
+    // Require MetaMask
+    if(typeof window.ethereum==='undefined'){toast('⚠️ MetaMask not found.');resetBtn();return;}
+    // Switch to Ritual Testnet first (silently adds if missing)
+    try{
+      await window.ethereum.request({method:'wallet_switchEthereumChain',params:[{chainId:'0x1ADED2'}]});
+    }catch(sw){
+      if(sw.code===4902){
+        try{await window.ethereum.request({method:'wallet_addEthereumChain',params:[RIT]});}
+        catch(add){toast('⚠️ Could not add Ritual Testnet. Add it manually in MetaMask.');resetBtn();return;}
+      } else if(sw.code===4001){
+        toast('⚠️ Please switch to Ritual Testnet in MetaMask.');resetBtn();return;
+      }
+      // code -32002 = already switching, wait a moment then proceed
+    }
     const provider=new ethers.BrowserProvider(window.ethereum);
     const signer=await provider.getSigner();
-    // Check we're on Ritual Testnet before sending
-    const network=await provider.getNetwork();
-    if(network.chainId!==1752274n){
-      try{await window.ethereum.request({method:'wallet_switchEthereumChain',params:[{chainId:RIT.chainId}]});}
-      catch(sw){toast('⚠️ Please switch MetaMask to Ritual Testnet first.');_vgPending=false;if(confirmBtn){confirmBtn.disabled=false;confirmBtn.textContent='Confirm Send';}return;}
-    }
+    const fromAddr=await signer.getAddress();
     const valueWei=ethers.parseEther(String(parsedAmt));
-    // Plain ETH transfer — no data field to avoid gas estimation failures on testnet
-    const txParams={to:w,value:valueWei};
-    // Estimate gas first; fall back to 21000 if estimation fails
-    let gasLimit=21000n;
-    try{gasLimit=await provider.estimateGas({...txParams,from:await signer.getAddress()});}catch(_){}
-    txParams.gasLimit=gasLimit+5000n; // small buffer
-    const tx=await signer.sendTransaction(txParams);
+    // Check balance first so we give a clear error
+    const balance=await provider.getBalance(fromAddr);
+    if(balance<valueWei){
+      const have=parseFloat(ethers.formatEther(balance)).toFixed(6);
+      toast('⚠️ Not enough testnet ETH. You have '+have+' ETH on Ritual Testnet.');
+      resetBtn();return;
+    }
+    // Plain transfer — no data, let MetaMask estimate gas
+    const tx=await signer.sendTransaction({to:w,value:valueWei});
     document.getElementById('vGiftRow').style.display='none';
     addLiveFeedItem('gift',String(parsedAmt),rH,'Recognition 🏆','Sent with vouch on Ritual Network');
-    toast('🎁 '+parsedAmt+' ETH sent to '+rH+'! TX: '+tx.hash.substring(0,14)+'...');
+    toast('🎁 '+parsedAmt+' ETH sent! TX: '+tx.hash.substring(0,16)+'...');
+    resetBtn();
   }catch(e){
-    const code=e?.code??e?.error?.code;
-    if(code===4001||code===-32603)toast('⚠️ Transaction rejected in MetaMask.');
-    else if(code===-32002)toast('⏳ MetaMask is busy — open it and approve or reject the pending request first.');
-    else if(e?.message?.toLowerCase().includes('insufficient'))toast('⚠️ Not enough Ritual Testnet ETH in your wallet.');
-    else if(e?.message?.toLowerCase().includes('user rejected'))toast('⚠️ Transaction rejected.');
-    else toast('⚠️ Transfer failed. Make sure MetaMask is on Ritual Testnet and try again.');
-  }finally{
-    _vgPending=false;
-    if(confirmBtn){confirmBtn.disabled=false;confirmBtn.textContent='Confirm Send';}
+    // Surface the real error clearly
+    const code=e?.code??e?.error?.code??e?.data?.code;
+    const msg=(e?.message||'').toLowerCase();
+    console.error('[confirmVouchGift]',e);
+    if(code===4001||msg.includes('user rejected')||msg.includes('user denied'))toast('⚠️ You rejected the transaction in MetaMask.');
+    else if(code===-32002)toast('⏳ MetaMask has a pending request — open it and resolve it first.');
+    else if(msg.includes('insufficient'))toast('⚠️ Not enough testnet ETH in your wallet.');
+    else if(msg.includes('nonce'))toast('⚠️ Nonce error — reset your MetaMask account (Settings → Advanced → Reset Account).');
+    else if(msg.includes('network')||msg.includes('chain'))toast('⚠️ Wrong network — switch MetaMask to Ritual Testnet (Chain ID 1752274).');
+    else{
+      // Show the actual error message so user can report it
+      const detail=(e?.message||e?.reason||JSON.stringify(e)).substring(0,80);
+      toast('⚠️ Failed: '+detail);
+    }
+    resetBtn();
   }
 }
 
