@@ -885,77 +885,115 @@ function sendVouchGift(){
   document.getElementById('vGiftRow').style.display='block';
   document.getElementById('vGiftAmt').focus();
 }
+let _vgPending=false;
 async function confirmVouchGift(){
+  if(_vgPending){toast('⏳ Transaction already pending — check MetaMask.');return;}
   const w=document.getElementById('vW').value.trim();
   const amt=document.getElementById('vGiftAmt').value;
   const toU=fetched['v'];const vXIn=document.getElementById('vXIn').value;
   const rH=toU?toU.handle:(vXIn?(vXIn.startsWith('@')?vXIn:'@'+vXIn):w.substring(0,10)+'...');
   if(!ethers.isAddress(w)){toast('⚠️ Invalid wallet address.');return;}
-  if(!amt||parseFloat(amt)<=0){toast('⚠️ Enter a valid amount.');return;}
+  const parsedAmt=parseFloat(amt);
+  if(!amt||parsedAmt<=0||isNaN(parsedAmt)){toast('⚠️ Enter a valid ETH amount (e.g. 0.001).');return;}
+  // Guard: find the confirm button and disable it
+  const confirmBtn=document.querySelector('#vGiftRow button[onclick="confirmVouchGift()"]');
+  if(confirmBtn){confirmBtn.disabled=true;confirmBtn.textContent='⏳ Sending...';}
+  _vgPending=true;
   try{
     const provider=new ethers.BrowserProvider(window.ethereum);
     const signer=await provider.getSigner();
-    const valueWei=ethers.parseEther(String(parseFloat(amt)));
-    const data=ethers.hexlify(ethers.toUtf8Bytes('RITUAL_VOUCH_GIFT:'+rH));
-    const tx=await signer.sendTransaction({to:w,value:valueWei,data:data,gasLimit:60000n});
+    // Check we're on Ritual Testnet before sending
+    const network=await provider.getNetwork();
+    if(network.chainId!==1752274n){
+      try{await window.ethereum.request({method:'wallet_switchEthereumChain',params:[{chainId:RIT.chainId}]});}
+      catch(sw){toast('⚠️ Please switch MetaMask to Ritual Testnet first.');_vgPending=false;if(confirmBtn){confirmBtn.disabled=false;confirmBtn.textContent='Confirm Send';}return;}
+    }
+    const valueWei=ethers.parseEther(String(parsedAmt));
+    // Plain ETH transfer — no data field to avoid gas estimation failures on testnet
+    const txParams={to:w,value:valueWei};
+    // Estimate gas first; fall back to 21000 if estimation fails
+    let gasLimit=21000n;
+    try{gasLimit=await provider.estimateGas({...txParams,from:await signer.getAddress()});}catch(_){}
+    txParams.gasLimit=gasLimit+5000n; // small buffer
+    const tx=await signer.sendTransaction(txParams);
     document.getElementById('vGiftRow').style.display='none';
-    addLiveFeedItem('gift',amt,rH,'Recognition 🏆','Sent with vouch on Ritual Network');
-    toast('🎁 '+amt+' ETH sent to '+rH+' on Ritual Testnet! TX: '+tx.hash.substring(0,12)+'...');
+    addLiveFeedItem('gift',String(parsedAmt),rH,'Recognition 🏆','Sent with vouch on Ritual Network');
+    toast('🎁 '+parsedAmt+' ETH sent to '+rH+'! TX: '+tx.hash.substring(0,14)+'...');
   }catch(e){
-    if(e.code===4001)toast('⚠️ Transaction rejected.');
-    else if(e.message&&e.message.includes('insufficient'))toast('⚠️ Insufficient testnet ETH. Get some from a faucet first.');
-    else toast('⚠️ Transfer failed: '+(e.message||'Unknown error').substring(0,60));
+    const code=e?.code??e?.error?.code;
+    if(code===4001||code===-32603)toast('⚠️ Transaction rejected in MetaMask.');
+    else if(code===-32002)toast('⏳ MetaMask is busy — open it and approve or reject the pending request first.');
+    else if(e?.message?.toLowerCase().includes('insufficient'))toast('⚠️ Not enough Ritual Testnet ETH in your wallet.');
+    else if(e?.message?.toLowerCase().includes('user rejected'))toast('⚠️ Transaction rejected.');
+    else toast('⚠️ Transfer failed. Make sure MetaMask is on Ritual Testnet and try again.');
+  }finally{
+    _vgPending=false;
+    if(confirmBtn){confirmBtn.disabled=false;confirmBtn.textContent='Confirm Send';}
   }
 }
 
 // ── SEND GIFT ─────────────────────────────────────────────
+let _gPending=false;
 async function sendGift(){
+  if(_gPending){toast('⏳ Transaction already pending — check MetaMask.');return;}
   const toU=fetched['g'];const gXIn=document.getElementById('gXIn').value;
   const amt=document.getElementById('gAmt').value;const msg=document.getElementById('gMsg').value;
   const occ=document.getElementById('gOcc').value;
   const recipientWallet=document.getElementById('gWallet').value.trim();
   const hasRecipient=toU||gXIn||recipientWallet;
   if(!hasRecipient){toast('⚠️ Enter a recipient X handle or wallet address.');return;}
-  if(!amt){toast('⚠️ Enter an amount.');return;}
+  const parsedAmt=parseFloat(amt);
+  if(!amt||parsedAmt<=0||isNaN(parsedAmt)){toast('⚠️ Enter a valid ETH amount (e.g. 0.001).');return;}
   if(!isConn){document.getElementById('gwarn').style.display='block';toast('⚠️ Connect wallet first.');return;}
   const btn=document.getElementById('gBtn');btn.disabled=true;btn.textContent='⏳ Sending...';
+  _gPending=true;
   const rH=toU?toU.handle:(gXIn?(gXIn.startsWith('@')?gXIn:'@'+gXIn):(recipientWallet.substring(0,10)+'...'));
   try{
     const provider=new ethers.BrowserProvider(window.ethereum);
     const signer=await provider.getSigner();
+    // Ensure correct network
+    const network=await provider.getNetwork();
+    if(network.chainId!==1752274n){
+      try{await window.ethereum.request({method:'wallet_switchEthereumChain',params:[{chainId:RIT.chainId}]});}
+      catch(sw){toast('⚠️ Please switch MetaMask to Ritual Testnet first.');_gPending=false;btn.disabled=false;btn.textContent='🎁 Send Ritual Testnet Tokens';return;}
+    }
     if(recipientWallet&&ethers.isAddress(recipientWallet)){
-      // Real ETH transfer to the recipient's wallet on Ritual Testnet
-      const valueWei=ethers.parseEther(String(parseFloat(amt)||0.001));
-      const data=ethers.hexlify(ethers.toUtf8Bytes('RITUAL_GIFT:'+rH+':'+msg));
-      const tx=await signer.sendTransaction({to:recipientWallet,value:valueWei,data:data,gasLimit:60000n});
+      // Real ETH transfer — plain, no data field to avoid testnet gas estimation issues
+      const valueWei=ethers.parseEther(String(parsedAmt));
+      const txParams={to:recipientWallet,value:valueWei};
+      let gasLimit=21000n;
+      try{gasLimit=await provider.estimateGas({...txParams,from:await signer.getAddress()});}catch(_){}
+      txParams.gasLimit=gasLimit+5000n;
+      const tx=await signer.sendTransaction(txParams);
       lastAct={type:'gift',data:{toUser:toU,amt,msg,occ,txHash:tx.hash,rH,toWallet:recipientWallet}};
-      showPostAction('gift','🎁 Sent '+amt+' ETH (Ritual Testnet) to '+rH+' · TX: '+tx.hash.substring(0,16)+'...');
+      showPostAction('gift','🎁 Sent '+parsedAmt+' ETH (Ritual Testnet) to '+rH+' · TX: '+tx.hash.substring(0,16)+'...');
       btn.textContent='✅ Tokens Sent!';setTimeout(()=>{btn.disabled=false;btn.textContent='🎁 Send Ritual Testnet Tokens';},5000);
-      addLiveFeedItem('gift',amt,rH,occ,msg);
-      toast('🎁 Real testnet tokens sent! TX: '+tx.hash.substring(0,12)+'...');
-      document.getElementById('gWallet').value='';
-      document.getElementById('gAmt').value='';
-      document.getElementById('gMsg').value='';
-      document.getElementById('gXIn').value='';
+      addLiveFeedItem('gift',String(parsedAmt),rH,occ,msg);
+      toast('🎁 Testnet tokens sent! TX: '+tx.hash.substring(0,14)+'...');
+      document.getElementById('gWallet').value='';document.getElementById('gAmt').value='';
+      document.getElementById('gMsg').value='';document.getElementById('gXIn').value='';
       document.getElementById('gXCard').classList.remove('show');
     } else {
-      // No valid wallet — record symbolic onchain note
-      const data=ethers.hexlify(ethers.toUtf8Bytes('RITUAL_GIFT_NOTE:'+rH+':'+amt+':'+msg));
-      const tx=await signer.sendTransaction({to:walletAddr,value:0n,data:data,gasLimit:50000n});
-      lastAct={type:'gift',data:{toUser:toU,amt,msg,occ,txHash:tx.hash,rH}};
-      showPostAction('gift','🎁 Gift of '+amt+' ETH noted for '+rH+' · TX: '+tx.hash.substring(0,14)+'...');
+      // No wallet — record as symbolic gift locally (no onchain tx needed)
+      lastAct={type:'gift',data:{toUser:toU,amt,msg,occ,txHash:null,rH}};
+      showPostAction('gift','🎁 Gift of '+parsedAmt+' ETH noted for '+rH+' — add their wallet for a real transfer!');
       btn.textContent='✅ Gift Noted!';setTimeout(()=>{btn.disabled=false;btn.textContent='🎁 Send Ritual Testnet Tokens';},4000);
-      addLiveFeedItem('gift',amt,rH,occ,msg);
-      toast('📝 Gift recorded onchain as note. Add wallet address for real transfer!');
+      addLiveFeedItem('gift',String(parsedAmt),rH,occ,msg);
+      toast('📝 Gift logged locally. Paste their wallet address to send real testnet tokens!');
     }
   }catch(e){
     btn.disabled=false;btn.textContent='🎁 Send Ritual Testnet Tokens';
     lastAct={type:'gift',data:{toUser:toU,amt,msg,occ,txHash:null,rH}};
-    showPostAction('gift','🎁 Gift of '+amt+' ETH queued for '+rH);
-    addLiveFeedItem('gift',amt,rH,occ,msg);
-    if(e.code===4001)toast('⚠️ Transaction rejected by wallet.');
-    else if(e.message&&e.message.includes('insufficient'))toast('⚠️ Insufficient testnet ETH balance. Get testnet tokens first.');
-    else toast('ℹ️ Gift recorded locally. Ensure you\'re on Ritual Testnet.');
+    showPostAction('gift','🎁 Gift of '+parsedAmt+' ETH queued for '+rH);
+    addLiveFeedItem('gift',String(parsedAmt),rH,occ,msg);
+    const code=e?.code??e?.error?.code;
+    if(code===4001||code===-32603)toast('⚠️ Transaction rejected in MetaMask.');
+    else if(code===-32002)toast('⏳ MetaMask is busy — open it and approve or reject the pending request first.');
+    else if(e?.message?.toLowerCase().includes('insufficient'))toast('⚠️ Not enough Ritual Testnet ETH in your wallet.');
+    else if(e?.message?.toLowerCase().includes('user rejected'))toast('⚠️ Transaction rejected.');
+    else toast('⚠️ Transfer failed. Make sure MetaMask is on Ritual Testnet and try again.');
+  }finally{
+    _gPending=false;
   }
 }
 
